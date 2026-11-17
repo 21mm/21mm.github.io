@@ -125,6 +125,36 @@ h1{font-size:clamp(17px,2.2vw,24px);font-weight:500;letter-spacing:.12em;color:#
 .ending{border:1px solid #c9b57e;background:linear-gradient(135deg,#1b3340,#0b1b25);padding:18px;margin:14px 0;box-shadow:0 10px 28px #0007}.ending h2{font-size:18px;color:#e0cf9a;font-weight:500}
 .disclaimer{font-size:9px;color:#819ca5;border-top:1px solid #294955}
 @media(max-width:760px){.wrap{padding:0 12px 26px}.mast-inner{padding:12px}.mast-meta{display:none}#view{padding:14px;min-height:450px}.adventure-scene{min-height:390px}.hotspot{min-width:108px;padding:7px 8px;font-size:9px}.person-card{grid-template-columns:150px 1fr;gap:12px}.portrait{width:145px;height:205px}.question-list{grid-template-columns:1fr}}
+
+/* Full-screen point-and-click scene */
+body{background:#080d15;font-family:var(--pixel)}
+.masthead,.compact-hud,.panel-heading,.disclaimer{display:none!important}
+.wrap{max-width:none;padding:0}
+.main-grid{display:block;margin:0}
+.main-panel{border:0;background:transparent;box-shadow:none}
+#view{padding:0;min-height:100vh}
+.adventure-scene{width:100%;height:100svh;min-height:480px;border:0;background:#111;box-shadow:none}
+.scene-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.scene-vignette{pointer-events:none;background:linear-gradient(180deg,#0006,transparent 18%,transparent 78%,#0007)}
+.scene-header,.notice,.scene-legend,.home-stats,.action-tiles{display:none!important}
+.hotspot{position:absolute;z-index:4;transform:translate(-50%,-50%);width:clamp(48px,8vw,110px);height:clamp(48px,8vw,110px);min-width:0;padding:0;border:1px solid transparent;border-radius:50%;background:#d5eff0;opacity:0;box-shadow:none;color:transparent}
+.hotspot:before,.hotspot small{display:none}
+.hotspot:hover:not(:disabled),.hotspot:focus-visible{opacity:.14;background:#b7f2ef;border:2px solid #d9ffff;transform:translate(-50%,-50%) scale(1.06)}
+.hotspot:disabled{opacity:0;pointer-events:none}
+.scene-caption{display:none}
+.scene-menu-button{position:absolute;z-index:8;top:18px;right:18px;border:1px solid #c7d4d9;background:#101b25dd;color:#f1f5f5;padding:10px 16px;font-size:12px;letter-spacing:.08em}
+.scene-menu-button:hover{background:#29404d}
+.scene-context{position:absolute;z-index:10;display:none;min-width:190px;max-width:min(280px,80vw);padding:10px;background:#0b1724f2;border:1px solid #b6d2d9;box-shadow:0 8px 30px #0009;color:#eef5f5}
+.scene-context.open{display:block}
+.scene-context-title{font-size:12px;color:#e5d39e;margin:0 0 8px}
+.scene-context button,.scene-menu button{display:block;width:100%;margin-top:6px;text-align:left;border:1px solid #55727e;background:#1a3040;color:#eef5f5;padding:9px 11px;font-size:11px}
+.scene-context button:hover,.scene-menu button:hover{background:#315365}
+.scene-menu{position:absolute;z-index:9;top:64px;right:18px;width:min(260px,calc(100vw - 36px));display:none;padding:12px;background:#0b1724f2;border:1px solid #b6d2d9;box-shadow:0 8px 30px #0009}
+.scene-menu.open{display:block}
+.scene-menu-title{color:#e5d39e;font-size:11px;letter-spacing:.08em}
+.scene-status{position:absolute;z-index:7;left:18px;top:18px;padding:7px 10px;background:#0b1724c9;border:1px solid #718894;color:#e7eeee;font-size:10px}
+.scene-back{margin:0 0 12px}
+@media(max-width:600px){.adventure-scene{height:100svh;min-height:440px}.scene-menu-button{top:12px;right:12px}.scene-status{left:12px;top:12px}}
 @media(max-width:520px){.hud{grid-template-columns:1fr 1.5fr}.hud-cell{padding:8px 10px}.hud-value{font-size:13px}.tab{padding:10px 12px;font-size:9px}.adventure-scene{min-height:340px}.hotspot{min-width:92px;font-size:8px}.hotspot small{font-size:7px}.person-card{grid-template-columns:1fr;justify-items:center;text-align:center}.portrait{width:170px;height:220px}.person-card>div{width:100%}.suspect-grid{grid-template-columns:1fr}.suspect-choice{display:flex;justify-content:space-between;align-items:center}.suspect-choice .sdesc{margin:0}.home-stats{gap:1px}.home-stat{padding:8px}.home-stat strong{font-size:12px}.action-tiles{grid-template-columns:1fr}}
 
 </style>
@@ -150,7 +180,7 @@ h1{font-size:clamp(17px,2.2vw,24px);font-weight:500;letter-spacing:.12em;color:#
   <div class="main-grid">
     <section class="main-panel">
       <div class="panel-heading"><h2 id="viewTitle">警視庁本部庁舎（霞ケ関）</h2><small id="viewSubtitle">現在の状況と次の行動</small></div>
-      <nav class="tabs" aria-label="捜査画面">
+      <nav class="tabs" aria-label="捜査画面" hidden>
         <button class="tab active" data-tab="home">現場調査</button>
         <button class="tab" data-tab="evidence">証拠ファイル</button>
         <button class="tab" data-tab="interview">取調室</button>
@@ -426,30 +456,18 @@ function renderHome(){
   {id:'prior',x:30,y:74,label:'旧事件ファイル',sub:'先行事件の記録'}
  ];
  const done=spots.filter(function(x){return hasEvidence(x.id);}).length;
- let out='<div class="scene-header"><strong>SCENE 01 / KASUMIGASEKI INVESTIGATION ROOM</strong><span>調査対象 '+done+' / 4</span></div>';
- out+='<div class="notice"><strong>操作：</strong>画面内で光っている調査ポイントを選択する。対象を調べると証拠ファイルに登録され、行動回数を1消費する。</div>';
- out+='<div class="adventure-scene" aria-label="捜査本部の調査画面">';
- out+='<svg class="scene-art" viewBox="0 0 1200 540" preserveAspectRatio="xMidYMid slice" role="img" aria-label="夜の捜査本部。中央に大型モニター、左右に資料棚と机がある">';
- out+='<defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#294959"/><stop offset="1" stop-color="#0a1a24"/></linearGradient><linearGradient id="floor" x2="0" y2="1"><stop stop-color="#152d38"/><stop offset="1" stop-color="#050d13"/></linearGradient><linearGradient id="screen" x2="0" y2="1"><stop stop-color="#123d4b"/><stop offset="1" stop-color="#06131b"/></linearGradient></defs>';
- out+='<rect width="1200" height="540" fill="url(#wall)"/><rect x="0" y="0" width="1200" height="42" fill="#06131d"/><path d="M0 330H1200V540H0Z" fill="url(#floor)"/>';
- out+='<g stroke="#466777" stroke-width="3" fill="none"><path d="M0 55H1200M0 330H1200M45 0V330M1155 0V330"/><path d="M0 90H1200M0 280H1200" opacity=".35"/></g>';
- out+='<g fill="#07131c" stroke="#466a78" stroke-width="3"><rect x="65" y="85" width="240" height="180"/><rect x="895" y="85" width="240" height="180"/><rect x="365" y="65" width="470" height="230"/></g>';
- out+='<rect x="385" y="85" width="430" height="190" rx="2" fill="url(#screen)" stroke="#70a6ae" stroke-width="2"/><g stroke="#2d7885" stroke-width="2" fill="none"><path d="M405 245L485 190L555 212L620 142L690 185L785 112"/><path d="M410 115H790M410 145H790M410 175H790M410 205H790" opacity=".45"/><path d="M460 100V260M520 100V260M580 100V260M640 100V260M700 100V260M760 100V260" opacity=".3"/></g>';
- out+='<g fill="#7ed1cf"><circle cx="485" cy="190" r="5"/><circle cx="620" cy="142" r="5"/><circle cx="785" cy="112" r="5"/></g><g fill="#c9d7d8" font-size="13" font-family="sans-serif"><text x="405" y="105">METROPOLITAN CASE ANALYSIS</text><text x="405" y="260">TOKYO / INCIDENT NETWORK</text></g>';
- out+='<g fill="#0a1720" stroke="#527786" stroke-width="3"><rect x="80" y="105" width="210" height="135"/><rect x="910" y="105" width="210" height="135"/></g>';
- out+='<g stroke="#5ba6b0" stroke-width="2" fill="none"><path d="M95 210L125 170L155 190L190 140L225 177L270 130"/><path d="M925 140H1100M925 170H1100M925 200H1100"/></g>';
- out+='<g fill="#132a35" stroke="#4e7180" stroke-width="3"><path d="M30 345H390V430H30Z"/><path d="M815 345H1170V430H815Z"/><path d="M405 365H795V470H405Z"/></g>';
- out+='<g fill="#0b1922" stroke="#557987" stroke-width="2"><rect x="75" y="315" width="170" height="40"/><rect x="925" y="315" width="160" height="40"/><rect x="465" y="330" width="270" height="38"/></g>';
- out+='<g fill="#d4c18b"><rect x="95" y="320" width="24" height="28"/><rect x="125" y="320" width="24" height="28"/><rect x="155" y="320" width="24" height="28"/><rect x="185" y="320" width="24" height="28"/></g>';
- out+='<g fill="#87c8cb" opacity=".8"><rect x="950" y="323" width="95" height="5"/><rect x="950" y="334" width="120" height="4"/><rect x="950" y="344" width="70" height="4"/></g>';
- out+='<g stroke="#315565" stroke-width="2"><path d="M0 455L1200 455M0 490L1200 490M200 330L80 540M1000 330L1120 540"/></g>';
- out+='<g fill="#d8e4e2" opacity=".6"><rect x="550" y="475" width="100" height="4"/><rect x="575" y="488" width="50" height="3"/></g>';
- out+='</svg><div class="scene-vignette"></div>';
- spots.forEach(function(p){const found=hasEvidence(p.id);out+='<button class="hotspot" style="left:'+p.x+'%;top:'+p.y+'%" data-action="search" data-id="'+p.id+'" '+(found||state.finished||state.turns<=0?'disabled':'')+'>'+esc(found?'確認済み':p.label)+'<small>'+esc(found?'FILE REGISTERED':p.sub)+'</small></button>';});
- out+='<div class="scene-caption">METROPOLITAN POLICE / SPECIAL INVESTIGATION DIVISION　—　NIGHT SHIFT</div></div>';
- out+='<div class="scene-legend"><span><b>操作対象</b> 発光するポイントをクリック</span><span><b>調査済み</b> 証拠ファイルに登録</span><span><b>行動回数</b> '+state.turns+' 回</span></div>';
- out+='<div class="home-stats"><div class="home-stat"><span>事件資料</span><strong>'+done+' / 4</strong></div><div class="home-stat"><span>矛盾の立証</span><strong>'+state.contradictions+' 件</strong></div><div class="home-stat"><span>架空の供述</span><strong>'+countConfessions()+' / 3</strong></div></div>';
- out+='<div class="action-tiles"><button class="action-tile" data-tab="evidence"><strong>証拠ファイルを開く</strong><span>確認した資料の詳細を読む。取調べ中の証言もここから提示できる。</span></button><button class="action-tile" data-tab="interview"><strong>関係者を尋問する</strong><span>質問を選び、証言と一致しない資料を突きつける。</span></button><button class="action-tile" data-tab="records"><strong>捜査記録を確認する</strong><span>事件の時系列、立証状況、行動ログを確認する。</span></button></div>';
+ let out='<div class="adventure-scene" aria-label="捜査本部オフィス">';
+ out+='<img class="scene-background" src="assets/backgrounds/hq-office-pov.jpg" alt="主人公の席から見た捜査本部オフィス">';
+ out+='<div class="scene-vignette"></div>';
+ out+='<div class="scene-status">捜査資料 '+done+' / 4　｜　残り行動 '+state.turns+'</div>';
+ out+='<button class="scene-menu-button" data-action="toggle-menu" aria-expanded="false">MENU</button>';
+ out+='<div class="scene-menu" id="sceneMenu"><div class="scene-menu-title">CASE MENU</div><button data-tab="evidence">証拠ファイルを開く</button><button data-tab="interview">関係者と話す</button><button data-tab="records">捜査記録を確認する</button><button data-action="close-menu">画面に戻る</button></div>';
+ out+='<div class="scene-context" id="sceneContext" role="dialog" aria-live="polite"></div>';
+ spots.forEach(function(p){
+  const found=hasEvidence(p.id);
+  out+='<button class="hotspot" style="left:'+p.x+'%;top:'+p.y+'%" data-action="open-context" data-id="'+p.id+'" aria-label="'+esc(p.label)+'" '+(found||state.finished||state.turns<=0?'disabled':'')+'></button>';
+ });
+ out+='</div>';
  return out;
 }
 function renderEnding(){
@@ -463,7 +481,9 @@ function renderEnding(){
 }
 function render(){
  renderHud();
- document.getElementById('view').innerHTML=state.tab==='home'?renderHome():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
+ let content=state.tab==='home'?renderHome():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
+ if(state.tab!=='home')content='<button class="btn scene-back" data-tab="home">← オフィスに戻る</button>'+content;
+ document.getElementById('view').innerHTML=content;
  renderSide();renderLogs();renderEnding();
 }
 document.addEventListener('click',function(ev){
@@ -471,9 +491,31 @@ document.addEventListener('click',function(ev){
  if(!btn)return;
  const action=btn.dataset.action,id=btn.dataset.id;
  if(action==='restart'){freshState();render();return;}
+ if(action==='toggle-menu'){
+  const menu=document.getElementById('sceneMenu');
+  if(menu)menu.classList.toggle('open');
+  btn.setAttribute('aria-expanded',menu&&menu.classList.contains('open')?'true':'false');
+  return;
+ }
+ if(action==='close-menu'){
+  const menu=document.getElementById('sceneMenu');if(menu)menu.classList.remove('open');return;
+ }
+ if(action==='open-context'){
+  const menu=document.getElementById('sceneContext');
+  const spot={incident:['運行記録端末','発生時刻と路線の記録を調べる'],lab:['鑑識資料モニター','試料の鑑定データを調べる'],facility:['押収物保管棚','施設捜索で押収した資料を調べる'],prior:['旧事件ファイル','先行事件の捜査記録を調べる']}[id];
+  if(menu&&spot){
+   const rect=btn.getBoundingClientRect(),scene=btn.closest('.adventure-scene'),bounds=scene.getBoundingClientRect();
+   menu.innerHTML='<div class="scene-context-title">'+esc(spot[0])+'</div><div style="font-size:10px;color:#c4d4d8">'+esc(spot[1])+'</div><button data-action="search" data-id="'+id+'">調べる</button><button data-action="close-context">閉じる</button>';
+   menu.style.left=Math.max(12,Math.min(rect.left-bounds.left,bounds.width-220))+'px';
+   menu.style.top=Math.max(72,Math.min(rect.bottom-bounds.top+8,bounds.height-130))+'px';
+   menu.classList.add('open');
+  }
+  return;
+ }
+ if(action==='close-context'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');return;}
  if(state.finished)return;
  if(btn.dataset.tab){state.tab=btn.dataset.tab;render();return;}
- if(action==='search')doSearch(id);
+ if(action==='search'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');doSearch(id);}
  else if(action==='ask')askQuestion(id);
  else if(action==='present')presentEvidence(id);
  else if(action==='pressure')pressure();
