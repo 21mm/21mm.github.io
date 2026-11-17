@@ -207,7 +207,7 @@ function renderHud(){
  const coreCount=['incident','lab','facility','prior'].filter(hasEvidence).length;
  document.getElementById('progressHud').textContent='事件資料 '+coreCount+'/4 ・ 供述 '+countConfessions()+'/3';
  document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===state.tab);});
- const titles={home:['捜査本部','現在の状況と次の行動'],evidence:['証拠資料室','必要な資料を選んで確認する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
+ const titles={home:['警視庁本部庁舎（霞ケ関）','現在の状況と次の行動'],evidence:['証拠資料室','必要な資料を選んで確認する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
  document.getElementById('viewTitle').textContent=titles[state.tab][0];
  document.getElementById('viewSubtitle').textContent=titles[state.tab][1];
 }
