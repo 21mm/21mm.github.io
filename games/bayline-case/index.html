@@ -29,6 +29,104 @@
 @media(max-width:850px){.main-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.compact-hud{grid-template-columns:1fr 1.4fr}.progress-cell .hud-value{font-size:11px}.home-stats{gap:6px}.home-stat{padding:9px}.home-stat strong{font-size:14px}.action-tiles{grid-template-columns:1fr}.action-tile{min-height:0;padding:12px}.tabs{overflow-x:auto;flex-wrap:nowrap}}
 @media(max-width:560px){.wrap{padding:0 10px 26px}.mast-inner{padding:12px 10px}.mast-meta{display:none}.hud{grid-template-columns:repeat(2,1fr);gap:6px;margin:12px 0}.hud-value{font-size:15px}.tabs{overflow-x:auto}.tab{padding:11px 9px;white-space:nowrap;font-size:10px}#view{padding:11px;min-height:390px}.evidence-grid{grid-template-columns:1fr}.evidence-card{min-height:140px}.suspect-grid{grid-template-columns:1fr}.suspect-choice{display:flex;justify-content:space-between;gap:8px;align-items:center}.suspect-choice .sdesc{margin:0;text-align:right}.person-card{grid-template-columns:65px 1fr;padding:9px}.portrait{width:62px;height:62px}.side-grid{grid-template-columns:1fr}.panel-heading{padding:10px}.line{font-size:12px}}
+
+/* Original 1990s cinematic adventure redesign */
+:root{--bg:#07121c;--panel:#0c1c28;--panel2:#132c3a;--edge:#345565;--edge2:#6b9ba7;--ink:#e4edf0;--muted:#91aab2;--gold:#d6c18a;--cyan:#76cbd0;--red:#d97979;--green:#91c6a3;--purple:#b7a4d4;--pixel:Arial,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+html{background:#030a10}body{font-family:var(--pixel);font-size:13px;letter-spacing:.025em;background:radial-gradient(ellipse at 50% -15%,#18394a 0,#0a1924 52%,#030a10 100%);color:var(--ink)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:10;background:repeating-linear-gradient(0deg,rgba(160,220,225,.018) 0 1px,transparent 1px 4px);opacity:.22}
+.wrap{max-width:1360px;padding:0 24px 40px}
+.masthead{border-bottom:1px solid #476a78;background:linear-gradient(90deg,#07131d,#122b38 52%,#07131d);box-shadow:0 8px 32px #0008}
+.mast-inner{max-width:1360px;padding:15px 24px;gap:16px}
+.badge-pixel{width:48px;height:48px;border:1px solid #83b0b7;background:linear-gradient(145deg,#d6e5df,#527c84);color:#07141b;font-size:23px;box-shadow:inset 0 0 12px #fff8,0 0 16px #6cc5ca44;border-radius:2px}
+.eyebrow{font-size:9px;letter-spacing:.23em;color:var(--cyan)}
+h1{font-size:clamp(17px,2.2vw,24px);font-weight:500;letter-spacing:.12em;color:#e5eff0}
+.mast-meta{font-size:9px;letter-spacing:.12em;color:#8cabb4;line-height:1.9}
+.hud{gap:1px;margin:16px 0 12px;background:#315565;border:1px solid #315565}
+.hud-cell{background:linear-gradient(135deg,#102735,#091720);border:0;box-shadow:none;padding:10px 16px;position:relative}
+.hud-cell:after{content:"";position:absolute;right:0;top:20%;height:60%;width:1px;background:#315565}
+.hud-label{font-size:9px;letter-spacing:.16em;color:#83a5af}
+.hud-value{font-size:16px;font-weight:500;letter-spacing:.08em;color:#dcebed}
+.hud-value.alert{color:#e1c78b}
+.main-grid{display:block}
+.main-panel{border:1px solid #426b7a;background:linear-gradient(145deg,#0b1b26,#07121a);box-shadow:0 18px 48px #0009;position:relative;overflow:hidden}
+.panel-heading{padding:12px 18px;background:linear-gradient(90deg,#173746,#0d202b 70%,#102a36);border-bottom:1px solid #426b7a;min-height:48px}
+.panel-heading h2{font-size:11px;font-weight:600;letter-spacing:.18em;color:#d9e9e9}
+.panel-heading small{font-size:9px;letter-spacing:.12em;color:#8aaab3}
+.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;border-bottom:1px solid #315565;background:linear-gradient(90deg,#0c202a,#091720)}
+.tab{border:0;border-right:1px solid #294653;padding:12px 20px;background:transparent;color:#8ba7af;font-size:10px;letter-spacing:.13em;white-space:nowrap}
+.tab:before{content:"";display:inline-block;width:5px;height:5px;border:1px solid #73949d;margin:0 10px 1px 0;transform:rotate(45deg)}
+.tab.active{background:linear-gradient(180deg,#1a3b48,#102a36);color:#e3d3a0;box-shadow:inset 0 -2px #d6c18a;font-weight:600}
+.tab.active:before{background:#d6c18a;border-color:#d6c18a}
+#view{padding:22px 24px;min-height:560px;background:radial-gradient(ellipse at 80% 0%,#1a3a4928,transparent 60%)}
+.section-title{font-size:11px;font-weight:600;letter-spacing:.18em;color:#d9c58e;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #315565}
+.subtext{font-size:10px;color:#91aab2;line-height:1.85;margin:0 0 13px}
+.notice{background:linear-gradient(90deg,#102b37,#0a1a24);border:1px solid #355d6b;border-left:3px solid #d6c18a;color:#c6d9dc;padding:12px 15px;font-size:10px;line-height:1.9;margin-bottom:14px}
+.notice strong{color:#e1cf9b}
+.scene-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;color:#87aab3;font-size:9px;letter-spacing:.18em}
+.scene-header strong{color:#d7c58f;font-weight:500}
+.adventure-scene{position:relative;overflow:hidden;min-height:440px;border:1px solid #4d7887;background:linear-gradient(180deg,#132c3a 0%,#0a1b26 65%,#050d14 100%);box-shadow:inset 0 0 60px #0008}
+.scene-art{position:absolute;inset:0;width:100%;height:100%;opacity:.92}
+.scene-vignette{position:absolute;inset:0;background:linear-gradient(90deg,#06121d99,transparent 22%,transparent 78%,#06121d99),linear-gradient(0deg,#02080dc9,transparent 40%,#06121d55)}
+.scene-caption{position:absolute;left:18px;bottom:15px;color:#b8cbd0;font-size:9px;letter-spacing:.14em;text-shadow:0 2px 5px #000}
+.hotspot{position:absolute;z-index:3;transform:translate(-50%,-50%);border:1px solid #9be4df;background:#0a2029cc;color:#dff6f2;border-radius:2px;padding:8px 11px;min-width:128px;text-align:left;box-shadow:0 0 18px #64d2cf55;transition:.18s}
+.hotspot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#82e1d8;box-shadow:0 0 10px #82e1d8;margin-right:8px}
+.hotspot:hover:not(:disabled){background:#1b5960e8;border-color:#e2d5a4;transform:translate(-50%,-50%) scale(1.04)}
+.hotspot:disabled{opacity:.48;box-shadow:none;border-color:#56737b;color:#9cb1b6}
+.hotspot:disabled:before{background:#8cb89a;box-shadow:none}
+.hotspot small{display:block;font-size:8px;color:#a4c2c7;padding:4px 0 0 16px;letter-spacing:.08em}
+.scene-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.scene-legend span{border:1px solid #294955;background:#0b1c26;padding:6px 9px;font-size:9px;color:#9db7bd}
+.scene-legend b{color:#d9c58e;font-weight:500;margin-right:6px}
+.evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.evidence-card{background:linear-gradient(145deg,#102431,#091720);border:1px solid #315565;padding:16px;min-height:174px;position:relative;transition:border-color .18s,background .18s}
+.evidence-card:hover{border-color:#78b5bd;background:linear-gradient(145deg,#153442,#0b1d27)}
+.evidence-title{font-size:12px;font-weight:600;color:#dcebed;letter-spacing:.04em}
+.evidence-type{font-size:8px;color:#70c9c5;letter-spacing:.17em;margin:7px 0}
+.evidence-desc{font-size:10px;color:#a9c1c7;line-height:1.9}
+.evidence-card .mini{font-size:9px;color:#91aab2;margin:9px 0}
+.btn{border:1px solid #638d99;background:linear-gradient(180deg,#1c4654,#102b38);padding:8px 13px;font-size:10px;letter-spacing:.07em;font-weight:600;box-shadow:0 2px 7px #0006;transition:.18s}
+.btn:hover:not(:disabled){background:linear-gradient(180deg,#2b6370,#174150);border-color:#9ac9ca}
+.btn.primary{background:linear-gradient(180deg,#e1d2a6,#b8a575);border-color:#f1e5bf;color:#17252a}
+.btn.primary:hover:not(:disabled){background:#efe0b7}
+.btn.danger{border-color:#965b61;background:linear-gradient(180deg,#66363d,#3a2029)}
+.btn.muted{background:#101e28;color:#6d8b95;border-color:#29424d}
+.tag{border:1px solid #4c8290;color:#9bc7cc;font-size:8px;letter-spacing:.1em;padding:3px 8px}
+.tag.fiction{border-color:#82729b;color:#c4b4db}
+.tag.done{border-color:#6cae83;color:#9acbaa}
+.suspect-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 15px}
+.suspect-choice{background:#0a1923;border:1px solid #315565;padding:10px 13px}
+.suspect-choice.active{background:linear-gradient(90deg,#1a3b48,#102633);border:1px solid #d6c18a;padding:10px 13px}
+.suspect-choice .sname{font-size:10px;color:#dcebed;letter-spacing:.08em}
+.suspect-choice .sdesc{font-size:8px;color:#83a3ae}
+.person-card{grid-template-columns:220px 1fr;gap:20px;align-items:center;border:1px solid #3a6170;padding:16px;background:linear-gradient(120deg,#102a36,#0a1923);margin:0 0 14px;min-height:280px}
+.portrait{width:210px;height:260px;border:1px solid #557987;background:linear-gradient(180deg,#183544,#08141d);image-rendering:auto;box-shadow:0 6px 18px #0007}
+.person-name{font-size:18px;color:#e1d1a1;letter-spacing:.1em;margin:0 0 4px}
+.person-role{font-size:9px;color:#83aab3;letter-spacing:.08em;margin-bottom:10px}
+.person-note{font-size:10px;line-height:1.9;color:#c2d3d7}
+.meter-wrap{margin:9px 0}.meter-head{font-size:9px;color:#a9c2c8}.meter{height:8px;background:#030a10;border:1px solid #3a5964;padding:0}.meter-fill{transition:width .2s}.meter-fill.agitation{background:linear-gradient(90deg,#9f986a,#e2d18e)}.meter-fill.resistance{background:linear-gradient(90deg,#914d59,#d97979)}
+.dialogue{border:1px solid #65939d;background:linear-gradient(135deg,#06131d,#0c2430);padding:16px 19px;margin:14px 0;box-shadow:inset 0 0 22px #0d2c3855;min-height:105px;position:relative}
+.dialogue:after{content:"";position:absolute;right:14px;bottom:12px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:8px solid #9ed5d5}
+.speaker{font-size:9px;color:#79d3d0;letter-spacing:.16em;margin-bottom:8px}
+.line{font-size:12px;line-height:2;color:#e0e9e9}
+.response-hint{font-size:9px;color:#8caab2;margin-top:10px}
+.question-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.question{display:flex;gap:10px;align-items:start;width:100%;text-align:left;background:linear-gradient(90deg,#142e3a,#0d202a);border:1px solid #315565;padding:11px}
+.question:hover:not(:disabled){border-color:#75b9bc;background:#193d48}
+.question .arrow{color:#d7c58e;font-weight:500}
+.question .qtitle{font-size:10px;font-weight:600;color:#d9e7e8}
+.question .qdesc{font-size:9px;color:#8daab2}
+.empty{border:1px dashed #42616d;padding:18px;text-align:center;color:#8daab2;font-size:10px}
+.timeline{display:grid;gap:0}.time-item{border-left:1px solid #456a77;padding:0 0 16px 18px;margin-left:7px}.time-item:before{background:#d6c18a;box-shadow:0 0 9px #d6c18a66}
+.time-date{font-size:9px;color:#70cbd0}.time-title{font-size:11px;font-weight:600;color:#dce9e9}.time-copy{font-size:10px;color:#91aab2;line-height:1.8}
+.home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:12px 0 18px;background:#315565;border:1px solid #315565}
+.home-stat{background:#0d202a;border:0;padding:11px 14px}.home-stat span{font-size:9px;color:#86a8b1}.home-stat strong{font-size:15px;font-weight:500;color:#e0d09e}
+.goal-list{display:grid;gap:8px}.goal{font-size:10px;color:#c4d5d8}.check{color:#91c6a3}.unchecked{color:#607f89}
+.action-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.action-tile{background:linear-gradient(135deg,#153442,#0c202a);border:1px solid #345c69;padding:13px;text-align:left;min-height:78px}.action-tile:hover{border-color:#79b9bd;background:#1a3d49}.action-tile strong{font-size:10px;color:#e1d19e}.action-tile span{font-size:9px;color:#9bb6bc;line-height:1.7}
+.ending{border:1px solid #c9b57e;background:linear-gradient(135deg,#1b3340,#0b1b25);padding:18px;margin:14px 0;box-shadow:0 10px 28px #0007}.ending h2{font-size:18px;color:#e0cf9a;font-weight:500}
+.disclaimer{font-size:9px;color:#819ca5;border-top:1px solid #294955}
+@media(max-width:760px){.wrap{padding:0 12px 26px}.mast-inner{padding:12px}.mast-meta{display:none}#view{padding:14px;min-height:450px}.adventure-scene{min-height:390px}.hotspot{min-width:108px;padding:7px 8px;font-size:9px}.person-card{grid-template-columns:150px 1fr;gap:12px}.portrait{width:145px;height:205px}.question-list{grid-template-columns:1fr}}
+@media(max-width:520px){.hud{grid-template-columns:1fr 1.5fr}.hud-cell{padding:8px 10px}.hud-value{font-size:13px}.tab{padding:10px 12px;font-size:9px}.adventure-scene{min-height:340px}.hotspot{min-width:92px;font-size:8px}.hotspot small{font-size:7px}.person-card{grid-template-columns:1fr;justify-items:center;text-align:center}.portrait{width:170px;height:220px}.person-card>div{width:100%}.suspect-grid{grid-template-columns:1fr}.suspect-choice{display:flex;justify-content:space-between;align-items:center}.suspect-choice .sdesc{margin:0}.home-stats{gap:1px}.home-stat{padding:8px}.home-stat strong{font-size:12px}.action-tiles{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -53,8 +151,8 @@
     <section class="main-panel">
       <div class="panel-heading"><h2 id="viewTitle">警視庁本部庁舎（霞ケ関）</h2><small id="viewSubtitle">現在の状況と次の行動</small></div>
       <nav class="tabs" aria-label="捜査画面">
-        <button class="tab active" data-tab="home">捜査本部</button>
-        <button class="tab" data-tab="evidence">証拠資料室</button>
+        <button class="tab active" data-tab="home">現場調査</button>
+        <button class="tab" data-tab="evidence">証拠ファイル</button>
         <button class="tab" data-tab="interview">取調室</button>
         <button class="tab" data-tab="records">捜査記録</button>
       </nav>
@@ -94,13 +192,13 @@ const questions = {
  ]
 };
 const portraits = {
- A:'<svg class="portrait" viewBox="0 0 16 16" role="img" aria-label="架空の人物Aのドット絵"><rect width="16" height="16" fill="#dce8ff"/><path fill="#263858" d="M3 2h10v2h1v5h-2V6H4v3H2V4h1z"/><path fill="#d8ad8b" d="M4 5h8v5H4z"/><path fill="#243451" d="M4 5h2v2H4zm6 0h2v2h-2zM4 10h8v2h2v4H2v-4h2z"/><path fill="#e0be9f" d="M6 11h4v2H6z"/><path fill="#627da9" d="M2 13h12v3H2z"/><path fill="#fff" d="M7 12h2v1H7z"/></svg>',
- B:'<svg class="portrait" viewBox="0 0 16 16" role="img" aria-label="架空の人物Bのドット絵"><rect width="16" height="16" fill="#dce8ff"/><path fill="#64503c" d="M3 3h10v2h1v5h-2V5H4v5H2V4h1z"/><path fill="#d8ad8b" d="M4 5h8v6H4z"/><path fill="#25324d" d="M4 6h2v2H4zm6 0h2v2h-2z"/><path fill="#8b4e4a" d="M6 9h4v1H6z"/><path fill="#475b7c" d="M4 11h8v2h2v3H2v-3h2z"/><path fill="#e7ceaf" d="M6 11h4v1H6z"/></svg>',
- C:'<svg class="portrait" viewBox="0 0 16 16" role="img" aria-label="架空の人物Cのドット絵"><rect width="16" height="16" fill="#dce8ff"/><path fill="#3a2d59" d="M3 2h10v2h1v6h-2V5H4v5H2V4h1z"/><path fill="#d8ad8b" d="M4 5h8v6H4z"/><path fill="#27314b" d="M4 6h2v2H4zm6 0h2v2h-2z"/><path fill="#3a2d59" d="M6 9h4v1H6z"/><path fill="#6c5b96" d="M4 11h8v2h2v3H2v-3h2z"/><path fill="#e7ceaf" d="M6 11h4v1H6z"/></svg>'
+ A:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="久我直人の人物イラスト"><defs><linearGradient id="pa" x2="0" y2="1"><stop stop-color="#244452"/><stop offset="1" stop-color="#091720"/></linearGradient></defs><rect width="220" height="280" fill="url(#pa)"/><path d="M20 280Q25 215 74 195L110 184L151 194Q198 216 202 280Z" fill="#1a2937"/><path d="M78 190L110 221L143 190L163 280H57Z" fill="#d5d9d4"/><path d="M99 207L110 225L121 207L132 280H88Z" fill="#263d4c"/><path d="M76 82Q77 28 121 29Q164 31 163 91L155 149Q143 180 112 181Q80 174 69 140Z" fill="#d8b99e"/><path d="M70 101Q59 57 83 30Q113 3 151 29Q177 51 164 111L153 75Q135 67 121 51Q107 75 77 77Z" fill="#17212b"/><path d="M78 94L100 91M126 91L151 94" stroke="#352c29" stroke-width="5"/><path d="M83 109Q94 104 103 110M128 110Q139 104 149 109" stroke="#242b31" stroke-width="3" fill="none"/><ellipse cx="96" cy="111" rx="4" ry="3" fill="#1d2b31"/><ellipse cx="137" cy="111" rx="4" ry="3" fill="#1d2b31"/><path d="M116 113L111 135L120 138M101 153Q115 158 130 151" stroke="#795d53" stroke-width="2" fill="none"/><path d="M76 80Q60 106 73 145L84 161L88 137L83 105M151 79Q170 108 153 150L143 164L139 134L146 104" fill="#17212b"/><path d="M0 245H220" stroke="#6b9aa2" opacity=".4"/><text x="14" y="22" fill="#a6c4c9" font-size="9" letter-spacing="2">SUBJECT A</text></svg>',
+ B:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="三枝遼の人物イラスト"><defs><linearGradient id="pb" x2="0" y2="1"><stop stop-color="#35434a"/><stop offset="1" stop-color="#0b1820"/></linearGradient></defs><rect width="220" height="280" fill="url(#pb)"/><path d="M15 280Q23 215 75 197L111 185L150 198Q195 219 205 280Z" fill="#24313b"/><path d="M79 192L110 218L143 193L166 280H55Z" fill="#c9d1d0"/><path d="M100 211L111 230L122 211L133 280H89Z" fill="#344d5a"/><path d="M75 82Q74 34 113 31Q157 28 160 86L153 146Q140 179 110 181Q80 172 69 139Z" fill="#d8b99e"/><path d="M66 104Q58 63 79 34Q101 9 141 25Q171 42 166 96L152 77L140 61Q113 75 88 66L76 99Z" fill="#302b2a"/><path d="M74 81Q59 111 76 152L89 165L86 126L91 91M153 78Q169 105 151 151L139 165L143 125L139 91" fill="#302b2a"/><path d="M82 108Q93 102 103 108M126 108Q138 102 148 108" stroke="#44342f" stroke-width="3" fill="none"/><ellipse cx="96" cy="113" rx="4" ry="3" fill="#263239"/><ellipse cx="137" cy="113" rx="4" ry="3" fill="#263239"/><path d="M116 114L110 135L119 139M100 154Q115 149 131 155" stroke="#8c675b" stroke-width="2" fill="none"/><path d="M0 245H220" stroke="#6b9aa2" opacity=".4"/><text x="14" y="22" fill="#a6c4c9" font-size="9" letter-spacing="2">SUBJECT B</text></svg>',
+ C:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="黒瀬真司の人物イラスト"><defs><linearGradient id="pc" x2="0" y2="1"><stop stop-color="#3b344a"/><stop offset="1" stop-color="#10131d"/></linearGradient></defs><rect width="220" height="280" fill="url(#pc)"/><path d="M15 280Q24 218 75 199L110 187L151 198Q196 220 205 280Z" fill="#171d29"/><path d="M79 193L110 219L143 193L165 280H55Z" fill="#d4d7d1"/><path d="M99 212L110 229L121 212L133 280H87Z" fill="#242c3a"/><path d="M76 82Q75 33 113 31Q157 29 161 88L153 147Q139 180 110 181Q79 174 68 140Z" fill="#cfae94"/><path d="M66 99Q56 57 82 29Q113 6 151 29Q170 43 164 94L153 74Q130 62 112 56Q98 76 74 78Z" fill="#161820"/><path d="M77 76Q66 99 75 133L87 158L88 112L84 88M151 75Q166 102 150 151L140 163L141 115L145 88" fill="#161820"/><path d="M81 105Q94 99 104 106M126 106Q139 99 149 104" stroke="#332c2b" stroke-width="4" fill="none"/><ellipse cx="96" cy="111" rx="4" ry="3" fill="#1e252b"/><ellipse cx="138" cy="111" rx="4" ry="3" fill="#1e252b"/><path d="M116 114L110 136L120 139M100 154Q115 157 130 151" stroke="#795d53" stroke-width="2" fill="none"/><path d="M0 245H220" stroke="#8b7ba7" opacity=".4"/><text x="14" y="22" fill="#c1b2d4" font-size="9" letter-spacing="2">SUBJECT C</text></svg>'
 };
 let state;
 function freshState(){
- state={turns:12,found:[],contradictions:0,activeSuspect:'A',tab:'evidence',pending:null,finished:false,won:false,logs:[],suspects:JSON.parse(JSON.stringify(suspectSeed)),usedEvidence:[]};
+ state={turns:12,found:[],contradictions:0,activeSuspect:'A',tab:'home',pending:null,finished:false,won:false,logs:[],suspects:JSON.parse(JSON.stringify(suspectSeed)),usedEvidence:[]};
  state.logs.push({text:'捜査開始。行動回数は12回。資料を調べ、証言と証拠を照合せよ。',tone:''});
  state.logs.push({text:'注意：取調べの会話と自供はゲーム用のフィクション。作中設定の引用ではない。',tone:''});
 }
@@ -167,8 +265,8 @@ function presentEvidence(eid){
  const p=state.pending,s=state.suspects[p.suspect],e=getEvidence(eid);
  if(eid===p.expected){
   state.contradictions++;
-  s.agitation=cap(s.agitation+40);
-  s.resistance=cap(s.resistance-3);
+  s.agitation=cap(s.agitation+50);
+  s.resistance=cap(s.resistance-10);
   log('矛盾を立証：「'+e.title+'」が証言と食い違う。動揺が大きく上昇。','good');
   log(p.response,'good');
  }else{
@@ -207,7 +305,7 @@ function renderHud(){
  const coreCount=['incident','lab','facility','prior'].filter(hasEvidence).length;
  document.getElementById('progressHud').textContent='事件資料 '+coreCount+'/4 ・ 供述 '+countConfessions()+'/3';
  document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===state.tab);});
- const titles={home:['警視庁本部庁舎（霞ケ関）','現在の状況と次の行動'],evidence:['証拠資料室','必要な資料を選んで確認する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
+ const titles={home:['霞ケ関駅・現場調査','画面内の調査ポイントを選択する'],evidence:['証拠ファイル','収集した資料を確認・提示する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
  document.getElementById('viewTitle').textContent=titles[state.tab][0];
  document.getElementById('viewSubtitle').textContent=titles[state.tab][1];
 }
@@ -266,7 +364,8 @@ function renderSuspect(id){
 }
 function renderInterview(){
  const s=selected();
- let out='<h3 class="section-title">取調べ室</h3><p class="subtext">質問で反応を見て、資料で矛盾を突く。先に問い詰めすぎると反発を招く。</p>';
+ let out='<div class="scene-header"><strong>SCENE 02 / INTERROGATION ROOM</strong><span>SUBJECT '+state.activeSuspect+' / '+esc(s.name)+'</span></div>';
+ out+='<p class="subtext">話題を選んで質問する。証言を記録したら、証拠ファイルから対応する資料を提示する。</p>';
  out+='<div class="interview-gauges"><div class="meter-wrap"><div class="meter-head"><span>動揺</span><strong>'+s.agitation+' / 100</strong></div><div class="meter"><div class="meter-fill agitation" style="width:'+s.agitation+'%"></div></div></div><div class="meter-wrap"><div class="meter-head"><span>反発</span><strong>'+s.resistance+' / 100</strong></div><div class="meter"><div class="meter-fill resistance" style="width:'+s.resistance+'%"></div></div></div></div>';
  out+=renderSuspect(state.activeSuspect);
  return out;
@@ -320,15 +419,37 @@ function renderLogs(){
  if(logRoot)logRoot.innerHTML=state.logs.map(function(x){return '<li class="'+esc(x.tone)+'">'+esc(x.text)+'</li>';}).join('');
 }
 function renderHome(){
- const core=[['incident','複数路線の被害記録'],['lab','遺留物の鑑定報告'],['facility','施設捜索・押収資料'],['prior','先行事件の捜査資料']];
- const done=core.filter(function(x){return hasEvidence(x[0]);}).length;
- let out='<h3 class="section-title">現在の捜査状況</h3><div class="notice"><strong>今回の任務：</strong>事件資料4点を集め、証拠のつながりを整理する。取調べの会話・自供はゲーム用の架空設定。</div>';
+ const spots=[
+  {id:'incident',x:20,y:34,label:'運行記録端末',sub:'発生時刻・路線'},
+  {id:'lab',x:77,y:32,label:'鑑識資料モニター',sub:'試料鑑定データ'},
+  {id:'facility',x:67,y:70,label:'押収物保管棚',sub:'施設捜索資料'},
+  {id:'prior',x:30,y:74,label:'旧事件ファイル',sub:'先行事件の記録'}
+ ];
+ const done=spots.filter(function(x){return hasEvidence(x.id);}).length;
+ let out='<div class="scene-header"><strong>SCENE 01 / KASUMIGASEKI INVESTIGATION ROOM</strong><span>調査対象 '+done+' / 4</span></div>';
+ out+='<div class="notice"><strong>操作：</strong>画面内で光っている調査ポイントを選択する。対象を調べると証拠ファイルに登録され、行動回数を1消費する。</div>';
+ out+='<div class="adventure-scene" aria-label="捜査本部の調査画面">';
+ out+='<svg class="scene-art" viewBox="0 0 1200 540" preserveAspectRatio="xMidYMid slice" role="img" aria-label="夜の捜査本部。中央に大型モニター、左右に資料棚と机がある">';
+ out+='<defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#294959"/><stop offset="1" stop-color="#0a1a24"/></linearGradient><linearGradient id="floor" x2="0" y2="1"><stop stop-color="#152d38"/><stop offset="1" stop-color="#050d13"/></linearGradient><linearGradient id="screen" x2="0" y2="1"><stop stop-color="#123d4b"/><stop offset="1" stop-color="#06131b"/></linearGradient></defs>';
+ out+='<rect width="1200" height="540" fill="url(#wall)"/><rect x="0" y="0" width="1200" height="42" fill="#06131d"/><path d="M0 330H1200V540H0Z" fill="url(#floor)"/>';
+ out+='<g stroke="#466777" stroke-width="3" fill="none"><path d="M0 55H1200M0 330H1200M45 0V330M1155 0V330"/><path d="M0 90H1200M0 280H1200" opacity=".35"/></g>';
+ out+='<g fill="#07131c" stroke="#466a78" stroke-width="3"><rect x="65" y="85" width="240" height="180"/><rect x="895" y="85" width="240" height="180"/><rect x="365" y="65" width="470" height="230"/></g>';
+ out+='<rect x="385" y="85" width="430" height="190" rx="2" fill="url(#screen)" stroke="#70a6ae" stroke-width="2"/><g stroke="#2d7885" stroke-width="2" fill="none"><path d="M405 245L485 190L555 212L620 142L690 185L785 112"/><path d="M410 115H790M410 145H790M410 175H790M410 205H790" opacity=".45"/><path d="M460 100V260M520 100V260M580 100V260M640 100V260M700 100V260M760 100V260" opacity=".3"/></g>';
+ out+='<g fill="#7ed1cf"><circle cx="485" cy="190" r="5"/><circle cx="620" cy="142" r="5"/><circle cx="785" cy="112" r="5"/></g><g fill="#c9d7d8" font-size="13" font-family="sans-serif"><text x="405" y="105">METROPOLITAN CASE ANALYSIS</text><text x="405" y="260">TOKYO / INCIDENT NETWORK</text></g>';
+ out+='<g fill="#0a1720" stroke="#527786" stroke-width="3"><rect x="80" y="105" width="210" height="135"/><rect x="910" y="105" width="210" height="135"/></g>';
+ out+='<g stroke="#5ba6b0" stroke-width="2" fill="none"><path d="M95 210L125 170L155 190L190 140L225 177L270 130"/><path d="M925 140H1100M925 170H1100M925 200H1100"/></g>';
+ out+='<g fill="#132a35" stroke="#4e7180" stroke-width="3"><path d="M30 345H390V430H30Z"/><path d="M815 345H1170V430H815Z"/><path d="M405 365H795V470H405Z"/></g>';
+ out+='<g fill="#0b1922" stroke="#557987" stroke-width="2"><rect x="75" y="315" width="170" height="40"/><rect x="925" y="315" width="160" height="40"/><rect x="465" y="330" width="270" height="38"/></g>';
+ out+='<g fill="#d4c18b"><rect x="95" y="320" width="24" height="28"/><rect x="125" y="320" width="24" height="28"/><rect x="155" y="320" width="24" height="28"/><rect x="185" y="320" width="24" height="28"/></g>';
+ out+='<g fill="#87c8cb" opacity=".8"><rect x="950" y="323" width="95" height="5"/><rect x="950" y="334" width="120" height="4"/><rect x="950" y="344" width="70" height="4"/></g>';
+ out+='<g stroke="#315565" stroke-width="2"><path d="M0 455L1200 455M0 490L1200 490M200 330L80 540M1000 330L1120 540"/></g>';
+ out+='<g fill="#d8e4e2" opacity=".6"><rect x="550" y="475" width="100" height="4"/><rect x="575" y="488" width="50" height="3"/></g>';
+ out+='</svg><div class="scene-vignette"></div>';
+ spots.forEach(function(p){const found=hasEvidence(p.id);out+='<button class="hotspot" style="left:'+p.x+'%;top:'+p.y+'%" data-action="search" data-id="'+p.id+'" '+(found||state.finished||state.turns<=0?'disabled':'')+'>'+esc(found?'確認済み':p.label)+'<small>'+esc(found?'FILE REGISTERED':p.sub)+'</small></button>';});
+ out+='<div class="scene-caption">METROPOLITAN POLICE / SPECIAL INVESTIGATION DIVISION　—　NIGHT SHIFT</div></div>';
+ out+='<div class="scene-legend"><span><b>操作対象</b> 発光するポイントをクリック</span><span><b>調査済み</b> 証拠ファイルに登録</span><span><b>行動回数</b> '+state.turns+' 回</span></div>';
  out+='<div class="home-stats"><div class="home-stat"><span>事件資料</span><strong>'+done+' / 4</strong></div><div class="home-stat"><span>矛盾の立証</span><strong>'+state.contradictions+' 件</strong></div><div class="home-stat"><span>架空の供述</span><strong>'+countConfessions()+' / 3</strong></div></div>';
- out+='<h3 class="section-title">捜査目標</h3><div class="goal-list home-goals">';
- core.forEach(function(x){out+='<div class="goal"><span class="'+(hasEvidence(x[0])?'check':'unchecked')+'">'+(hasEvidence(x[0])?'■':'□')+'</span><span>'+x[1]+'</span></div>';});
- out+='<div class="goal"><span class="'+(anyConfession()?'check':'unchecked')+'">'+(anyConfession()?'■':'□')+'</span><span>少なくとも1人の架空の関係者から供述を得る</span></div></div>';
- out+='<h3 class="section-title">次の行動</h3><div class="action-tiles"><button class="action-tile" data-tab="evidence"><strong>01　証拠資料室</strong><span>未調査の資料を確認する</span></button><button class="action-tile" data-tab="interview"><strong>02　取調室</strong><span>関係者に質問し、証拠を提示する</span></button><button class="action-tile" data-tab="records"><strong>03　捜査記録</strong><span>事件の経緯と行動ログを確認する</span></button></div>';
- out+='<p class="subtext" style="margin-top:16px">資料を調べる・質問する・証拠を提示する操作で行動回数を1消費する。取調べ中に資料室へ移動しても、質問は保留される。</p>';
+ out+='<div class="action-tiles"><button class="action-tile" data-tab="evidence"><strong>証拠ファイルを開く</strong><span>確認した資料の詳細を読む。取調べ中の証言もここから提示できる。</span></button><button class="action-tile" data-tab="interview"><strong>関係者を尋問する</strong><span>質問を選び、証言と一致しない資料を突きつける。</span></button><button class="action-tile" data-tab="records"><strong>捜査記録を確認する</strong><span>事件の時系列、立証状況、行動ログを確認する。</span></button></div>';
  return out;
 }
 function renderEnding(){
