@@ -358,7 +358,7 @@ const portraits = {
 };
 let state;
 function freshState(){
- state={turns:12,found:[],contradictions:0,activeSuspect:'A',tab:'home',pending:null,finished:false,won:false,logs:[],suspects:JSON.parse(JSON.stringify(suspectSeed)),usedEvidence:[]};
+ state={turns:12,found:[],contradictions:0,activeSuspect:'A',tab:'home',pending:null,examining:null,examiningFrom:'home',finished:false,won:false,logs:[],suspects:JSON.parse(JSON.stringify(suspectSeed)),usedEvidence:[]};
  state.logs.push({text:'捜査開始。行動回数は12回。資料を調べ、証言と証拠を照合せよ。',tone:''});
  state.logs.push({text:'注意：取調べの会話と自供はゲーム用のフィクション。作中設定の引用ではない。',tone:''});
 }
@@ -399,13 +399,39 @@ function finishCheck(){
   log('行動回数を使い切った。捜査班は結論を立証できなかった。','bad');
  }
 }
+function beginSearch(id){
+ const e=getEvidence(id);
+ if(!e||hasEvidence(id)||!unlocked(e)||state.finished||state.turns<=0)return;
+ state.examining=id;
+ state.examiningFrom=state.tab==='investigation'?'home':state.tab;
+ state.tab='investigation';
+ render();
+}
 function doSearch(id){
  const e=getEvidence(id);
- if(!e||hasEvidence(id)||!unlocked(e)||!useTurn())return;
+ if(!e||state.examining!==id||hasEvidence(id)||!unlocked(e)||!useTurn())return;
  state.found.push(id);
+ state.examining=null;
+ state.tab=state.examiningFrom||'home';
  log('資料を確認：「'+e.title+'」を証拠ファイルに追加。','good');
  if(e.type==='ゲーム内資料')log('これはゲーム内で作成された架空資料。作中設定の記録とは区別する。');
  finishCheck();render();
+}
+function cancelSearch(){
+ state.examining=null;
+ state.tab=state.examiningFrom||'home';
+ render();
+}
+function renderInvestigation(){
+ const e=getEvidence(state.examining);
+ if(!e)return '<div class="empty">調査対象が選択されていない。</div>';
+ let out='<div class="scene-header"><strong>INVESTIGATION / '+esc(e.id.toUpperCase())+'</strong><span>調査対象</span></div>';
+ out+='<h3 class="section-title">'+esc(e.title)+'</h3>';
+ out+='<div class="notice"><strong>調査メモ：</strong>'+esc(e.description)+'</div>';
+ out+='<section class="evidence-card" style="min-height:0"><div class="evidence-type">'+esc(e.type)+'</div><div class="evidence-title">確認するポイント</div><div class="evidence-desc">'+esc(e.detail)+'</div></section>';
+ out+='<p class="subtext" style="margin-top:14px">内容を確認しただけでは、まだ証拠ファイルには登録されない。調査を完了すると行動回数を1消費する。</p>';
+ out+='<div class="btnrow"><button class="btn primary" data-action="complete-search" data-id="'+esc(e.id)+'" '+(state.turns<=0||state.finished?'disabled':'')+'>調査を完了する（-1）</button><button class="btn" data-action="cancel-search">調査を中止して戻る</button></div>';
+ return out;
 }
 function askQuestion(qid){
  if(state.finished||state.pending)return;
@@ -465,7 +491,7 @@ function renderHud(){
  const coreCount=['incident','lab','facility','prior'].filter(hasEvidence).length;
  document.getElementById('progressHud').textContent='事件資料 '+coreCount+'/4 ・ 供述 '+countConfessions()+'/3';
  document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===state.tab);});
- const titles={home:['霞ケ関駅・現場調査','画面内の調査ポイントを選択する'],evidence:['証拠ファイル','収集した資料を確認・提示する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
+ const titles={home:['霞ケ関駅・現場調査','画面内の調査ポイントを選択する'],investigation:['調査画面','対象を確認し、調査を完了する'],evidence:['証拠ファイル','収集した資料を確認・提示する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
  document.getElementById('viewTitle').textContent=titles[state.tab][0];
  document.getElementById('viewSubtitle').textContent=titles[state.tab][1];
 }
@@ -611,8 +637,8 @@ function renderEnding(){
 }
 function render(){
  renderHud();
- let content=state.tab==='home'?renderHome():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
- if(state.tab!=='home')content='<button class="btn scene-back" data-tab="home">← オフィスに戻る</button>'+content;
+ let content=state.tab==='home'?renderHome():state.tab==='investigation'?renderInvestigation():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
+ if(state.tab!=='home'&&state.tab!=='investigation')content='<button class="btn scene-back" data-tab="home">← オフィスに戻る</button>'+(content||'');
  document.getElementById('view').innerHTML=content;
  renderSide();renderLogs();renderEnding();
 }
@@ -645,7 +671,9 @@ document.addEventListener('click',function(ev){
  if(action==='close-context'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');return;}
  if(state.finished)return;
  if(btn.dataset.tab){state.tab=btn.dataset.tab;render();return;}
- if(action==='search'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');doSearch(id);}
+ if(action==='search'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');beginSearch(id);}
+ else if(action==='complete-search')doSearch(id);
+ else if(action==='cancel-search')cancelSearch();
  else if(action==='ask')askQuestion(id);
  else if(action==='present')presentEvidence(id);
  else if(action==='pressure')pressure();
