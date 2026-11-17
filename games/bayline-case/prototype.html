@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07131b">
+<title>特別捜査本部 — 基本画面プロトタイプ</title>
+<style>
+:root{color-scheme:dark;--ink:#e8eeee;--muted:#a9b9bb;--line:#6b898d;--gold:#d7c18d;--panel:rgba(7,18,25,.94)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07131b;color:var(--ink);font-family:"Yu Gothic",YuGothic,Meiryo,sans-serif}
+button{font:inherit;color:inherit}
+#stage{position:relative;width:100%;height:100%;isolation:isolate;background:#10232b}
+.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scene svg{width:100%;height:100%;display:block}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,8,13,.5),transparent 19%,transparent 72%,rgba(0,7,12,.48))}
+.brand{position:absolute;top:18px;left:22px;z-index:5;color:#e6eeee;text-shadow:0 2px 8px #000;font-size:11px;letter-spacing:.18em;pointer-events:none}
+.brand small{display:block;margin-top:5px;color:#a9c0c2;font-size:9px;letter-spacing:.12em}
+.menu-trigger{position:absolute;right:22px;top:18px;z-index:20;width:44px;height:44px;border:1px solid #9db4b3;background:rgba(4,15,21,.72);backdrop-filter:blur(8px);display:grid;place-items:center;cursor:pointer}
+.menu-trigger span,.menu-trigger span:before,.menu-trigger span:after{display:block;width:17px;height:1px;background:#e8eeee;position:relative;content:""}
+.menu-trigger span:before{position:absolute;top:-6px}.menu-trigger span:after{position:absolute;top:6px}
+.hotspot{position:absolute;z-index:4;border:1px solid transparent;background:transparent;cursor:pointer;border-radius:3px;transform:translate(-50%,-50%);transition:background .15s,border-color .15s}
+.hotspot:hover,.hotspot:focus-visible{outline:none;border-color:rgba(218,202,151,.9);background:rgba(218,202,151,.12);box-shadow:0 0 22px rgba(218,202,151,.18)}
+#spot-cabinet{left:18.5%;top:49%;width:17%;height:46%}
+#spot-phone{left:40%;top:73%;width:10%;height:13%}
+#spot-files{left:54%;top:72%;width:19%;height:21%}
+#spot-monitor{left:68%;top:42%;width:19%;height:37%}
+#spot-door{left:91%;top:48%;width:13%;height:61%}
+#spot-person{left:30%;top:57%;width:15%;height:49%}
+.context{position:absolute;z-index:30;min-width:190px;max-width:min(260px,calc(100vw - 28px));padding:0;background:var(--panel);border:1px solid #829da0;box-shadow:0 12px 36px #0009;backdrop-filter:blur(12px);display:none}
+.context.open{display:block;animation:appear .12s ease-out}
+.context-title{padding:10px 13px;border-bottom:1px solid #3c5960;color:var(--gold);font-size:11px;letter-spacing:.1em}
+.context-actions{padding:5px}
+.context-actions button{display:block;width:100%;padding:10px 9px;border:0;background:transparent;text-align:left;font-size:12px;cursor:pointer}
+.context-actions button:hover,.context-actions button:focus-visible{outline:none;background:#29434b}
+.context-actions button:before{content:"›";color:var(--gold);margin-right:9px}
+.dialogue{position:absolute;z-index:25;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(900px,calc(100% - 36px));padding:15px 19px 13px;border:1px solid #9aafb0;background:rgba(5,16,22,.94);box-shadow:0 10px 34px #0009;display:none}
+.dialogue.open{display:block;animation:appear .16s ease-out}
+.speaker{color:var(--gold);font-size:11px;letter-spacing:.1em;margin-bottom:7px}
+.line{font-size:14px;line-height:1.85;min-height:2em}
+.dialogue-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:#8fa7aa;font-size:10px}
+.dialogue-footer button{border:1px solid #627d82;background:#182d34;padding:6px 13px;cursor:pointer}
+.overlay{position:absolute;inset:0;z-index:40;background:rgba(1,8,12,.66);display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(5px)}
+.overlay.open{display:flex}
+.sheet{width:min(540px,100%);max-height:min(78vh,650px);overflow:auto;border:1px solid #829da0;background:rgba(7,19,26,.97);box-shadow:0 20px 60px #000b}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid #3c5960}
+.sheet-head h2{font-size:13px;font-weight:500;letter-spacing:.15em;margin:0;color:var(--gold)}
+.close{width:32px;height:32px;border:1px solid #607b80;background:transparent;cursor:pointer;font-size:18px}
+.sheet-body{padding:12px 18px 18px}
+.menu-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.menu-list button{padding:14px 12px;text-align:left;border:1px solid #3d5b62;background:#142a32;cursor:pointer}
+.menu-list button:hover{background:#203e47;border-color:#9bb3b2}
+.menu-list strong{display:block;font-size:12px;font-weight:500}
+.menu-list small{display:block;color:#9eb2b4;font-size:10px;margin-top:5px}
+.record{padding:12px 0;border-bottom:1px solid #29434a;font-size:12px;line-height:1.7}
+.record:last-child{border:0}
+.record small{display:block;color:#9eb2b4;margin-top:3px;font-size:10px}
+.toast{position:absolute;z-index:50;left:50%;top:78px;transform:translateX(-50%);padding:8px 14px;background:rgba(4,15,20,.9);border:1px solid #637f83;color:#dce7e6;font-size:11px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){
+ .brand{left:13px;top:13px;font-size:9px}.brand small{font-size:8px}
+ .menu-trigger{right:13px;top:13px;width:40px;height:40px}
+ #spot-cabinet{left:17%;width:23%}#spot-phone{left:40%;top:75%;width:15%}#spot-files{left:55%;top:74%;width:24%}#spot-monitor{left:70%;top:42%;width:25%}#spot-door{left:94%;width:15%}#spot-person{left:29%;width:20%}
+ .dialogue{width:calc(100% - 22px);bottom:max(11px,env(safe-area-inset-bottom));padding:12px 13px}
+ .line{font-size:12px}.menu-list{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main id="stage" aria-label="特別捜査本部">
+  <div class="scene" aria-label="夜の捜査本部の室内イラスト">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="夜の捜査本部。机、モニター、書類棚、電話、人物、扉がある">
+      <defs>
+        <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#233d48"/><stop offset="1" stop-color="#101f28"/></linearGradient>
+        <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#192b32"/><stop offset="1" stop-color="#09141b"/></linearGradient>
+        <linearGradient id="window" x2="1" y2="1"><stop stop-color="#142c3b"/><stop offset=".55" stop-color="#1e4552"/><stop offset="1" stop-color="#0a1a25"/></linearGradient>
+        <linearGradient id="desk" x2="0" y2="1"><stop stop-color="#765d45"/><stop offset=".2" stop-color="#4a392e"/><stop offset="1" stop-color="#241f1d"/></linearGradient>
+        <linearGradient id="screen" x2="0" y2="1"><stop stop-color="#294f58"/><stop offset="1" stop-color="#0b2029"/></linearGradient>
+        <radialGradient id="lamp"><stop stop-color="#e3d3a3" stop-opacity=".26"/><stop offset="1" stop-color="#e3d3a3" stop-opacity="0"/></radialGradient>
+        <pattern id="grain" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#d8e0d6" opacity=".12"/></pattern>
+        <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+      </defs>
+      <rect width="1440" height="900" fill="#08151d"/>
+      <rect x="0" y="0" width="1440" height="650" fill="url(#wall)"/>
+      <rect x="0" y="650" width="1440" height="250" fill="url(#floor)"/>
+      <path d="M0 650L1440 650M0 0L0 900M1440 0L1440 900" stroke="#6c8587" stroke-opacity=".25" stroke-width="5"/>
+      <ellipse cx="720" cy="360" rx="600" ry="390" fill="url(#lamp)"/>
+      <!-- city window -->
+      <rect x="460" y="70" width="510" height="365" fill="#09151d" stroke="#6d8587" stroke-width="12"/>
+      <rect x="475" y="85" width="480" height="335" fill="url(#window)"/>
+      <path d="M475 300L530 250 570 270 635 195 690 250 748 178 805 235 866 170 955 248V420H475Z" fill="#102b38"/>
+      <g fill="#c1c6a1" opacity=".72">
+        <path d="M500 260h8v15h-8zm29-16h7v20h-7zm45 22h9v13h-9zm57-56h8v16h-8zm35 37h8v14h-8zm61-61h9v18h-9zm39 48h7v15h-7zm56-47h8v18h-8zm42 30h8v14h-8zm51-48h8v16h-8zm-430 96h8v15h-8zm360 15h8v14h-8z"/>
+      </g>
+      <g fill="#d4c58d" opacity=".5"><rect x="546" y="325" width="4" height="13"/><rect x="602" y="290" width="4" height="12"/><rect x="719" y="312" width="5" height="15"/><rect x="846" y="275" width="4" height="12"/><rect x="914" y="330" width="5" height="14"/></g>
+      <path d="M714 85V420M475 253H955" stroke="#738b8e" stroke-width="7" opacity=".8"/>
+      <path d="M450 440H985" stroke="#152932" stroke-width="17"/>
+      <!-- wall map and shelves -->
+      <rect x="70" y="130" width="270" height="245" fill="#172b32" stroke="#71888a" stroke-width="8"/>
+      <rect x="84" y="144" width="242" height="216" fill="#b8b49b"/>
+      <path d="M103 175L170 155 208 208 292 180M105 245L158 220 198 276 290 245M130 330L183 285 245 315 300 290" stroke="#6b7771" stroke-width="3" fill="none"/>
+      <g fill="#9a6957" opacity=".9"><circle cx="170" cy="155" r="5"/><circle cx="208" cy="208" r="5"/><circle cx="290" cy="245" r="5"/><circle cx="183" cy="285" r="5"/></g>
+      <rect x="1050" y="125" width="260" height="455" fill="#182a30" stroke="#526e73" stroke-width="8"/>
+      <path d="M1060 270H1300M1060 420H1300" stroke="#71878a" stroke-width="8"/>
+      <g fill="#9a8063"><rect x="1075" y="170" width="42" height="85"/><rect x="1120" y="155" width="33" height="100"/><rect x="1160" y="180" width="48" height="75"/><rect x="1214" y="160" width="31" height="95"/><rect x="1250" y="190" width="35" height="65"/><rect x="1075" y="300" width="35" height="108"/><rect x="1115" y="320" width="48" height="88"/><rect x="1170" y="292" width="35" height="116"/><rect x="1210" y="315" width="34" height="93"/><rect x="1250" y="300" width="35" height="108"/></g>
+      <g stroke="#d1c3a0" stroke-width="2" opacity=".45"><path d="M1082 190h28m-28 8h28m-28 8h28M1127 180h20m-20 8h20m-20 8h20M1170 200h27m-27 8h27M1220 180h18m-18 8h18"/></g>
+      <!-- door -->
+      <rect x="1330" y="105" width="100" height="555" fill="#182a30" stroke="#6c8587" stroke-width="9"/>
+      <rect x="1344" y="120" width="72" height="525" fill="#243940" stroke="#0a171d" stroke-width="4"/>
+      <rect x="1357" y="150" width="46" height="165" fill="#30474b" opacity=".7"/>
+      <circle cx="1395" cy="390" r="7" fill="#c9b783"/>
+      <rect x="1360" y="70" width="40" height="20" fill="#d2c38e" opacity=".8"/>
+      <!-- ceiling lights -->
+      <path d="M190 0V65M1150 0V70" stroke="#596f71" stroke-width="5"/>
+      <path d="M120 62H260L245 76H135Z" fill="#b8c2b0" opacity=".75"/>
+      <path d="M1080 67H1220L1205 81H1095Z" fill="#b8c2b0" opacity=".6"/>
+      <!-- standing investigator silhouette -->
+      <ellipse cx="390" cy="775" rx="105" ry="23" fill="#02080c" opacity=".65"/>
+      <path d="M342 480Q350 445 394 440Q438 445 447 485L467 670 443 765H324L302 670Z" fill="#18242b"/>
+      <path d="M351 466Q390 438 426 468L415 560 360 565Z" fill="#283b42"/>
+      <path d="M358 460Q370 420 403 420Q438 425 442 466L424 506 361 500Z" fill="#b18c70"/>
+      <path d="M354 451Q355 410 401 405Q445 407 451 454L432 443 417 425 385 436 366 465Z" fill="#182128"/>
+      <path d="M360 507L337 680 350 758H390L397 588 418 758H455L446 660 424 508Z" fill="#101b22"/>
+      <path d="M365 520L395 570 421 520" stroke="#75878a" stroke-width="5" fill="none"/>
+      <!-- desk foreground -->
+      <path d="M210 620L1200 620 1310 715 105 715Z" fill="url(#desk)" stroke="#9b7b58" stroke-width="5"/>
+      <path d="M105 715H1310L1270 900H155Z" fill="#241f1d" stroke="#604b39" stroke-width="5"/>
+      <path d="M240 715L260 900M1170 715L1140 900" stroke="#4a382d" stroke-width="18"/>
+      <path d="M210 620L1200 620 1310 715 105 715Z" fill="url(#grain)" opacity=".5"/>
+      <!-- monitor -->
+      <path d="M880 320H1125V520H880Z" fill="#111a1e" stroke="#8a9990" stroke-width="9"/>
+      <rect x="895" y="336" width="215" height="166" fill="url(#screen)"/>
+      <path d="M912 365H1030M912 382H1085M912 399H1050M912 430H1075" stroke="#85b7b1" stroke-width="3" opacity=".6"/>
+      <path d="M912 455H1010" stroke="#cbbd8d" stroke-width="4" opacity=".8"/>
+      <path d="M1000 520V565H955L940 594H1070L1055 565H1010V520" fill="#333d3e" stroke="#84918b" stroke-width="5"/>
+      <!-- desk lamp -->
+      <path d="M760 625L790 515 850 470" stroke="#29363a" stroke-width="13" fill="none"/>
+      <path d="M817 465L866 478 850 515 800 500Z" fill="#b7a77c" stroke="#e0d0a1" stroke-width="4"/>
+      <ellipse cx="830" cy="540" rx="175" ry="125" fill="url(#lamp)" filter="url(#soft)"/>
+      <!-- telephone -->
+      <path d="M400 630Q450 610 515 635L530 688Q465 708 395 684Z" fill="#202b2d" stroke="#9aa39a" stroke-width="5"/>
+      <path d="M405 632Q410 598 440 598H480Q510 600 516 632L493 645H425Z" fill="#303b3b" stroke="#a4aaa0" stroke-width="5"/>
+      <g fill="#b8b49a"><circle cx="432" cy="655" r="5"/><circle cx="455" cy="650" r="5"/><circle cx="478" cy="655" r="5"/><circle cx="443" cy="674" r="5"/><circle cx="467" cy="673" r="5"/></g>
+      <!-- files and folders -->
+      <path d="M570 650L690 640 720 680 590 695Z" fill="#b7a47b" stroke="#e1d0a0" stroke-width="3"/>
+      <path d="M585 620L695 615 722 651 600 665Z" fill="#6d7d70" stroke="#b8c3a7" stroke-width="3"/>
+      <path d="M610 600L725 602 747 630 628 642Z" fill="#8d6d54" stroke="#d0b68c" stroke-width="3"/>
+      <path d="M620 625L682 622" stroke="#e4d4a9" stroke-width="3"/>
+      <path d="M630 655L690 650" stroke="#e4d4a9" stroke-width="3"/>
+      <!-- loose papers -->
+      <path d="M740 670L850 650 880 695 765 710Z" fill="#c4c2aa" stroke="#ece2c5" stroke-width="3"/>
+      <path d="M760 680L835 666M770 690L845 677M780 700L820 693" stroke="#7c8980" stroke-width="2"/>
+      <!-- mug -->
+      <path d="M300 642H350L345 696H307Z" fill="#243b40" stroke="#a7b7ae" stroke-width="4"/>
+      <path d="M350 654Q380 650 372 675Q365 692 347 685" fill="none" stroke="#a7b7ae" stroke-width="5"/>
+      <!-- floor reflections -->
+      <path d="M300 780L600 780 540 900H240ZM900 760L1130 760 1190 900H1010Z" fill="#52666a" opacity=".07"/>
+      <rect width="1440" height="900" fill="url(#grain)" opacity=".45"/>
+      <rect width="1440" height="900" fill="none" stroke="#02080c" stroke-width="34" opacity=".45"/>
+    </svg>
+  </div>
+  <div class="shade"></div>
+  <div class="brand">BAYLINE CASE FILE<small>特別捜査本部 / 23:18 TOKYO</small></div>
+  <button class="menu-trigger" id="mainMenuButton" aria-label="メニューを開く"><span></span></button>
+  <button class="hotspot" id="spot-cabinet" data-target="cabinet" aria-label="書類棚"></button>
+  <button class="hotspot" id="spot-phone" data-target="phone" aria-label="電話"></button>
+  <button class="hotspot" id="spot-files" data-target="files" aria-label="机の書類"></button>
+  <button class="hotspot" id="spot-monitor" data-target="monitor" aria-label="モニター"></button>
+  <button class="hotspot" id="spot-door" data-target="door" aria-label="扉"></button>
+  <button class="hotspot" id="spot-person" data-target="person" aria-label="捜査員"></button>
+  <div class="context" id="contextMenu" role="menu"><div class="context-title" id="contextTitle"></div><div class="context-actions" id="contextActions"></div></div>
+  <section class="dialogue" id="dialogue" aria-live="polite"><div class="speaker" id="speaker"></div><div class="line" id="dialogueText"></div><div class="dialogue-footer"><span>会話中</span><button id="dialogueClose">閉じる</button></div></section>
+  <section class="overlay" id="mainOverlay" aria-modal="true" role="dialog" aria-labelledby="sheetTitle">
+    <div class="sheet"><header class="sheet-head"><h2 id="sheetTitle">捜査メニュー</h2><button class="close" data-close aria-label="閉じる">×</button></header><div class="sheet-body" id="sheetBody"></div></div>
+  </section>
+  <div class="toast" id="toast" role="status"></div>
+</main>
+<script>
+const targets={
+ cabinet:{title:"書類棚",actions:[["棚を調べる","棚には事件資料と過去の報告書が並んでいる。必要な資料を探せそうだ。"],["事件ファイルを見る","関連資料の背表紙に、湾岸線沿線で発生した複数の事案が記されている。"],["戻る",null]]},
+ phone:{title:"卓上電話",actions:[["受話器を取る","回線はつながっている。今は新しい連絡は入っていない。"],["着信履歴を確認","最後の着信は23時06分。発信元は庁内の内線番号だった。"],["戻る",null]]},
+ files:{title:"机の書類",actions:[["書類を調べる","現場から届いた一次報告書と、時刻を記したメモが重ねられている。"],["報告書を読む","複数の駅で似た症状が報告されている。発生時刻には一定の偏りがある。"],["戻る",null]]},
+ monitor:{title:"端末モニター",actions:[["端末を操作","庁内ネットワークに接続されている。事件記録と交通情報を参照できる。"],["交通情報を表示","湾岸線周辺の運行情報に、短時間の遅延記録が残っている。"],["戻る",null]]},
+ door:{title:"本部の扉",actions:[["外へ出る","今は捜査本部を離れる段階ではない。"],["廊下の様子をうかがう","廊下には人影がない。遠くで電話の呼び出し音が聞こえる。"],["戻る",null]]},
+ person:{title:"捜査員",actions:[["話しかける","三枝「現場からの追加報告は、まだ届いていません。まずは時系列を整理しましょう」"],["状況を聞く","三枝「被害の発生場所と時間を並べれば、共通点が見えてくるはずです」"],["戻る",null]]}
+};
+const menu=document.getElementById("contextMenu"), title=document.getElementById("contextTitle"), actions=document.getElementById("contextActions"), overlay=document.getElementById("mainOverlay"), sheetTitle=document.getElementById("sheetTitle"), sheetBody=document.getElementById("sheetBody"), dialogue=document.getElementById("dialogue"), toast=document.getElementById("toast");
+let toastTimer;
+function closeContext(){menu.classList.remove("open")}
+function closeOverlay(){overlay.classList.remove("open")}
+function showToast(message){toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),1800)}
+function speak(name,message){closeContext();document.getElementById("speaker").textContent=name;document.getElementById("dialogueText").textContent=message;dialogue.classList.add("open")}
+function openTarget(id,button){
+ const item=targets[id];if(!item)return;
+ closeContext();title.textContent=item.title;actions.replaceChildren();
+ item.actions.forEach(([label,message])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.addEventListener("click",()=>{closeContext();if(label==="戻る")return;speak(id==="person"?"三枝 遼":item.title,message)});actions.append(b)});
+ const stage=document.getElementById("stage").getBoundingClientRect(),r=button.getBoundingClientRect();
+ menu.style.left=Math.min(Math.max(12,r.left+r.width/2-90),stage.width-205)+"px";
+ menu.style.top=Math.min(Math.max(70,r.top+r.height/2-25),stage.height-190)+"px";
+ menu.classList.add("open");
+}
+document.querySelectorAll(".hotspot").forEach(b=>b.addEventListener("click",()=>openTarget(b.dataset.target,b)));
+document.getElementById("mainMenuButton").addEventListener("click",()=>{
+ closeContext();sheetTitle.textContent="捜査メニュー";
+ sheetBody.innerHTML='<div class="menu-list"><button data-page="inventory"><strong>所持品</strong><small>入手した証拠・資料</small></button><button data-page="people"><strong>関係者</strong><small>人物情報と証言</small></button><button data-page="records"><strong>捜査記録</strong><small>確認した情報の一覧</small></button><button data-page="save"><strong>セーブ</strong><small>現在の進行状況を保存</small></button></div>';
+ sheetBody.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>openPage(b.dataset.page)));
+ overlay.classList.add("open");
+});
+function openPage(page){
+ const pages={
+ inventory:["所持品",'<div class="record">所持品はまだありません。<small>調査で見つけた資料や証拠がここに追加されます。</small></div>'],
+ people:["関係者",'<div class="record">三枝 遼 — 捜査員<small>捜査本部で情報整理を担当している。</small></div><div class="record">久我 直人 — 関係者<small>詳細は未確認。</small></div>'],
+ records:["捜査記録",'<div class="record">23:18 — 捜査本部に到着<small>室内の設備と資料を確認できる。</small></div><div class="record">未確認の情報<small>対象をクリックして調査を開始する。</small></div>'],
+ save:["セーブ",'<div class="record">この画面の試作段階では、セーブデータの保存機能は未実装です。<small>次の段階で進行状態と結びつけます。</small></div>']
+ };
+ const p=pages[page];sheetTitle.textContent=p[0];sheetBody.innerHTML=p[1];
+}
+document.getElementById("dialogueClose").addEventListener("click",()=>dialogue.classList.remove("open"));
+overlay.addEventListener("click",e=>{if(e.target===overlay||e.target.closest("[data-close]"))closeOverlay()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeContext();closeOverlay();dialogue.classList.remove("open")}});
+document.addEventListener("click",e=>{if(!e.target.closest(".hotspot")&&!e.target.closest(".context")&&!e.target.closest("#mainMenuButton"))closeContext()});
+</script>
+</body>
+</html>
