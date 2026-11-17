@@ -287,6 +287,37 @@ body{background:#080d15;font-family:var(--pixel)}
 }
 .adventure-scene .hotspot-label{display:none!important}
 .adventure-scene .hotspot:before{display:none!important}
+
+/* Scene-first navigation: investigation close-ups and a physical notebook layout. */
+.scene-menu-button,.scene-menu{display:none!important}
+.scene-notebook-button{position:absolute;z-index:8;top:18px;right:18px;padding:12px 22px;border:1px solid #d7c59a;background:#211b16e8;color:#f3e8ce;font-size:14px;letter-spacing:.12em;cursor:pointer}
+.scene-notebook-button:hover{background:#4a3928}
+.investigation-scene{position:relative;width:100%;min-height:min(72vh,760px);aspect-ratio:43/24;overflow:hidden;background:#101820;color:#f5f1e8}
+.investigation-backdrop{position:absolute;inset:0;background-repeat:no-repeat;background-size:250% 250%;filter:brightness(.62) saturate(.78)}
+.investigation-shade{position:absolute;inset:0;background:linear-gradient(180deg,#07111a22 10%,#07111a22 42%,#07111ae8 100%)}
+.investigation-heading{position:absolute;top:24px;left:28px;display:flex;flex-direction:column;gap:6px;text-shadow:0 2px 8px #000}
+.investigation-heading span{font-size:11px;letter-spacing:.2em;color:#e6d4a8}
+.investigation-heading strong{font-size:clamp(18px,2.5vw,30px)}
+.investigation-panel{position:absolute;left:0;right:0;bottom:0;padding:clamp(18px,3vw,34px);background:linear-gradient(180deg,#0b1724e8,#08121af5);border-top:1px solid #a6b7b5;color:#f0f2ed}
+.investigation-panel>p{max-width:1000px;line-height:1.8;margin:10px 0}
+.investigation-detail{color:#d7c89f}
+.investigation-panel small{display:block;color:#b8c6c7;margin-top:12px}
+.investigation-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notebook-scene{width:100%;min-height:70vh;padding:clamp(12px,3vw,32px);background:radial-gradient(ellipse at center,#66503b 0%,#30251d 75%,#17120f 100%);box-sizing:border-box}
+.notebook-cover{max-width:1100px;min-height:640px;margin:0 auto;padding:18px 18px 18px 38px;background:linear-gradient(90deg,#34251b 0 18px,#765437 18px,#503622 100%);box-shadow:0 18px 50px #0009;border:1px solid #a17a50;border-radius:8px}
+.notebook-binding{display:none}
+.notebook-page{position:relative;min-height:600px;padding:clamp(22px,4vw,44px);background:repeating-linear-gradient(0deg,#f5edda 0,#f5edda 30px,#e5dcc8 31px,#f5edda 32px);color:#29251e;box-shadow:inset 8px 0 18px #8a765033}
+.notebook-kicker{font-size:10px;letter-spacing:.18em;color:#77684f}
+.notebook-page h2{margin:8px 0 18px;color:#34291d;font-family:Georgia,serif;font-size:clamp(26px,3vw,38px)}
+.notebook-tabs{display:flex;gap:8px;border-bottom:1px solid #9b8b70;padding-bottom:10px;margin-bottom:18px}
+.notebook-tabs button{padding:8px 18px;border:1px solid #9b8b70;background:#e8dfcb;color:#443b2e;cursor:pointer}
+.notebook-tabs button.active{background:#51402e;color:#fff4dc}
+.notebook-content{color:#29251e}
+.notebook-content .card,.notebook-content .evidence-card,.notebook-content .person-card,.notebook-content .record-card{background:#fffaf0;color:#29251e;border-color:#b8a98d}
+.notebook-content .section-title,.notebook-content h3,.notebook-content h4{color:#403426}
+.notebook-content .fact,.notebook-content .evidence-desc,.notebook-content p{color:#403b32}
+.notebook-return{margin-top:22px;padding:10px 16px;border:1px solid #79674c;background:#4a3928;color:#fff1d2;cursor:pointer}
+@media(max-width:700px){.investigation-scene{min-height:680px;aspect-ratio:auto}.investigation-panel{padding:18px}.notebook-cover{padding:10px 10px 10px 24px;min-height:0}.notebook-page{min-height:0;padding:22px 16px}.notebook-tabs{flex-wrap:wrap}.scene-notebook-button{top:10px;right:10px}}
 </style>
 </head>
 <body>
@@ -425,12 +456,11 @@ function cancelSearch(){
 function renderInvestigation(){
  const e=getEvidence(state.examining);
  if(!e)return '<div class="empty">調査対象が選択されていない。</div>';
- let out='<div class="scene-header"><strong>INVESTIGATION / '+esc(e.id.toUpperCase())+'</strong><span>調査対象</span></div>';
- out+='<h3 class="section-title">'+esc(e.title)+'</h3>';
- out+='<div class="notice"><strong>調査メモ：</strong>'+esc(e.description)+'</div>';
- out+='<section class="evidence-card" style="min-height:0"><div class="evidence-type">'+esc(e.type)+'</div><div class="evidence-title">確認するポイント</div><div class="evidence-desc">'+esc(e.detail)+'</div></section>';
- out+='<p class="subtext" style="margin-top:14px">内容を確認しただけでは、まだ証拠ファイルには登録されない。調査を完了すると行動回数を1消費する。</p>';
- out+='<div class="btnrow"><button class="btn primary" data-action="complete-search" data-id="'+esc(e.id)+'" '+(state.turns<=0||state.finished?'disabled':'')+'>調査を完了する（-1）</button><button class="btn" data-action="cancel-search">調査を中止して戻る</button></div>';
+ const focus={incident:'20% 34%',lab:'77% 32%',facility:'67% 70%',prior:'30% 74%'}[e.id]||'50% 50%';
+ let out='<div class="investigation-scene">';
+ out+='<div class="investigation-backdrop" style="background-image:url(\'assets/backgrounds/hq-office-pov.jpg\');background-position:'+focus+'"></div>';
+ out+='<div class="investigation-shade"></div><div class="investigation-heading"><span>調査中</span><strong>'+esc(e.title)+'</strong></div>';
+ out+='<section class="investigation-panel"><div class="evidence-type">'+esc(e.type)+'</div><p>'+esc(e.description)+'</p><p class="investigation-detail">'+esc(e.detail)+'</p><small>調査を完了すると行動回数を1消費し、資料が手帳に記録される。</small><div class="investigation-actions"><button class="btn primary" data-action="complete-search" data-id="'+esc(e.id)+'" '+(state.turns<=0||state.finished?'disabled':'')+'>調査を完了する</button><button class="btn" data-action="cancel-search">オフィスに戻る</button><button class="btn" data-action="open-notebook">手帳を開く</button></div></section></div>';
  return out;
 }
 function askQuestion(qid){
@@ -491,7 +521,7 @@ function renderHud(){
  const coreCount=['incident','lab','facility','prior'].filter(hasEvidence).length;
  document.getElementById('progressHud').textContent='事件資料 '+coreCount+'/4 ・ 供述 '+countConfessions()+'/3';
  document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===state.tab);});
- const titles={home:['霞ケ関駅・現場調査','画面内の調査ポイントを選択する'],investigation:['調査画面','対象を確認し、調査を完了する'],evidence:['証拠ファイル','収集した資料を確認・提示する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
+ const titles={home:['警視庁本部・捜査オフィス','画面内の対象をクリックして調べる'],investigation:['対象を調べる','現物を確認し、必要なら手帳に記録する'],evidence:['捜査手帳','収集した資料を確認・提示する'],interview:['捜査手帳','関係者への質問と証拠提示'],records:['捜査手帳','事件の経緯とプレイ中の記録']};
  document.getElementById('viewTitle').textContent=titles[state.tab][0];
  document.getElementById('viewSubtitle').textContent=titles[state.tab][1];
 }
@@ -616,8 +646,7 @@ function renderHome(){
  out+='<img class="scene-background" src="assets/backgrounds/hq-office-pov.jpg" alt="主人公の席から見た捜査本部オフィス">';
  out+='<div class="scene-vignette"></div>';
  out+='<div class="scene-status">捜査資料 '+done+' / 4　｜　残り行動 '+state.turns+'</div>';
- out+='<button class="scene-menu-button" data-action="toggle-menu" aria-expanded="false">MENU</button>';
- out+='<div class="scene-menu" id="sceneMenu"><div class="scene-menu-title">CASE MENU</div><button data-tab="evidence">証拠ファイルを開く</button><button data-tab="interview">関係者と話す</button><button data-tab="records">捜査記録を確認する</button><button data-action="close-menu">画面に戻る</button></div>';
+ out+='<button class="scene-notebook-button" data-action="open-notebook">手帳</button>';
  out+='<div class="scene-context" id="sceneContext" role="dialog" aria-live="polite"></div>';
  spots.forEach(function(p){
   const found=hasEvidence(p.id);
@@ -635,10 +664,17 @@ function renderEnding(){
   root.innerHTML='<section class="ending"><div class="eyebrow">TIME UP</div><h2>行動回数を使い切った</h2><p>証拠の収集と供述の立証を、制限ターン内に完了できなかった。どの証言から崩すか、どの資料を優先するかを見直そう。</p><p>ヒント：施設久我直人には「施設捜索・押収資料」と「先行事件の捜査資料」、当日の動向を知るBには「複数路線の被害記録」と「鑑定報告」を提示すると動揺が大きく上がる。</p><button class="btn primary" data-action="restart">最初からやり直す</button></section>';
  }
 }
+function renderNotebook(){
+ let content=state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
+ const tabs=[['evidence','証拠'],['interview','関係者'],['records','記録']];
+ let out='<div class="notebook-scene"><div class="notebook-cover"><div class="notebook-binding"></div><div class="notebook-page"><div class="notebook-kicker">SPECIAL INVESTIGATION / CASE 2026-0418</div><h2>捜査手帳</h2><nav class="notebook-tabs">';
+ tabs.forEach(function(t){out+='<button class="'+(state.tab===t[0]?'active':'')+'" data-tab="'+t[0]+'">'+t[1]+'</button>';});
+ out+='</nav><div class="notebook-content">'+(content||'')+'</div><button class="notebook-return" data-tab="home">手帳を閉じてオフィスに戻る</button></div></div></div>';
+ return out;
+}
 function render(){
  renderHud();
- let content=state.tab==='home'?renderHome():state.tab==='investigation'?renderInvestigation():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
- if(state.tab!=='home'&&state.tab!=='investigation')content='<button class="btn scene-back" data-tab="home">← オフィスに戻る</button>'+(content||'');
+ let content=state.tab==='home'?renderHome():state.tab==='investigation'?renderInvestigation():renderNotebook();
  document.getElementById('view').innerHTML=content;
  renderSide();renderLogs();renderEnding();
 }
@@ -647,6 +683,7 @@ document.addEventListener('click',function(ev){
  if(!btn)return;
  const action=btn.dataset.action,id=btn.dataset.id;
  if(action==='restart'){freshState();render();return;}
+ if(action==='open-notebook'){state.tab='evidence';render();return;}
  if(action==='toggle-menu'){
   const menu=document.getElementById('sceneMenu');
   if(menu)menu.classList.toggle('open');
