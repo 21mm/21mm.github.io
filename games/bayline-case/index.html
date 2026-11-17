@@ -232,379 +232,35 @@ body{background:#080d15;font-family:var(--pixel)}
  object-fit:fill;
 }
 
-</style>
-</head>
-<body>
-<header class="masthead">
-  <div class="mast-inner">
-    <div class="badge-pixel" aria-hidden="true">特</div>
-    <div class="mast-copy">
-      <div class="eyebrow">RETRO CASE FILES / INVESTIGATION SIMULATOR</div>
-      <h1>特別捜査本部 — 都心3路線連続傷害事件</h1>
-    </div>
-    <div class="mast-meta">CASE No. 2026-0418 / TOKYO<br>ORIGINAL FICTION</div>
-  </div>
-</header>
-<div class="wrap">
-  <section class="hud compact-hud" aria-label="捜査状況">
-    <div class="hud-cell"><div class="hud-label">残り行動回数</div><div class="hud-value alert" id="turnHud">12 / 12</div></div>
-    <div class="hud-cell progress-cell"><div class="hud-label">捜査進行</div><div class="hud-value" id="progressHud">資料 0/4 ・ 供述 0/3</div></div>
-  </section>
 
-  <div id="ending"></div>
-  <div class="main-grid">
-    <section class="main-panel">
-      <div class="panel-heading"><h2 id="viewTitle">警視庁本部庁舎（霞ケ関）</h2><small id="viewSubtitle">現在の状況と次の行動</small></div>
-      <nav class="tabs" aria-label="捜査画面" hidden>
-        <button class="tab active" data-tab="home">現場調査</button>
-        <button class="tab" data-tab="evidence">証拠ファイル</button>
-        <button class="tab" data-tab="interview">取調室</button>
-        <button class="tab" data-tab="records">捜査記録</button>
-      </nav>
-      <div id="view"></div>
-    </section>
-  </div>
-  <div class="disclaimer"><strong>フィクションについて：</strong>舞台には実在する東京都、鉄道路線、駅、施設名を使用していますが、事件、組織「星環会」、物質「ルーメンX」、個人名、資料、会話、捜査経緯はすべて創作です。実在の施設・団体・人物が事件に関与した事実を示すものではありません。</div>
-</div>
-<script>
-(function(){
-'use strict';
-const evidenceSeed = [
- {id:'incident',title:'複数路線の被害記録',type:'事件資料',description:'2026年4月18日朝、東京都内の日比谷線・丸ノ内線・千代田線の霞ケ関駅、築地駅、小伝馬町駅周辺で乗客の意識障害が相次いだ。発生場所と時刻を並べ、単独の事故では説明できない点を整理する。',detail:'複数路線で同じ時間帯に異常事案が発生したことを示す架空の運行記録。',core:true},
- {id:'lab',title:'遺留物の鑑定報告',type:'事件資料',description:'現場で回収された試料の鑑定により、架空の有害物質「ルーメンX」が検出された。鑑定結果と現場記録の一致を確認する。',detail:'鑑定結果は、目撃情報だけに頼らず事件を立証するための重要な柱。',core:true},
- {id:'facility',title:'施設捜索・押収資料',type:'事件資料',description:'4月21日の星環会の関連施設（東京都内・架空）への捜索で、ルーメンXに関係するとみられる保管記録と設備が見つかった。すべて作中だけに存在する架空の証拠である。',detail:'現場の鑑定記録と施設の捜索結果を照合し、事件とのつながりを検討する。',core:true},
- {id:'prior',title:'先行事件の捜査資料',type:'事件資料',description:'4月19日に発生した架空の証拠隠滅未遂事件の捜査が、星環会の関連施設（東京都内・架空）への捜索につながった経緯をまとめた資料。',detail:'事件直後の捜査が、どのような経緯で関連施設へ進んだかを示す架空の記録。',core:true},
- {id:'crosscheck',title:'関係者の供述照合メモ',type:'ゲーム内資料',description:'ゲーム内で捜査班が作成した架空の照合メモ。複数の関係者の説明に矛盾がないかを比較する。',detail:'実在する警察資料ではなく、矛盾指摘の遊び方を示すための架空資料。',core:false,unlock:'contradiction'},
- {id:'command',title:'指示系統の仮説図',type:'ゲーム内資料',description:'集めた証拠と架空の供述を結びつけた、ゲーム内の分析図。確定した事件資料ではない。',detail:'単独の証言ではなく、証拠全体が同じ結論を支持するかを整理する。',core:false,unlock:'confession'}
-];
-const suspectSeed = {
- A:{name:'久我 直人',short:'施設関係者',role:'施設内の事情を知る人物（架空の複合人物）',bio:'星環会の関連施設内の物品管理と、捜査が近づいていた可能性について質問する。実在の特定人物をモデルにしたものではない。',color:'#91b9f0',agitation:12,resistance:15,confessed:false,silenced:false,asked:[]},
- B:{name:'三枝 遼',short:'当日の動向を知る人物',role:'当日の状況を知る人物（架空の複合人物）',bio:'被害の広がりと鑑定結果について質問する。回答と公開記録の整合性を確かめる。',color:'#eabf7e',agitation:10,resistance:20,confessed:false,silenced:false,asked:[]},
- C:{name:'黒瀬 真司',short:'連絡経路を知る人物',role:'連絡経路について知る人物（架空の複合人物）',bio:'供述の照合が進んでから質問できる。連絡経路の仮説を、複数の根拠で検証する。',color:'#c1a4f5',agitation:8,resistance:23,confessed:false,silenced:false,asked:[]}
-};
-const questions = {
- A:[
-  {id:'storage',title:'施設内の物品について',body:'「施設に何が保管されていたか、私は知りません。物品の管理にも関わっていません。」',expected:'facility',response:'施設の捜索記録を確認すると、その説明と整合しない点がある。'},
-  {id:'prior',title:'捜査が迫っていた可能性について',body:'「警察が施設を捜索するなど、聞いたことはありません。」',expected:'prior',response:'先行事件の捜査経緯を示す資料との間に、説明の食い違いがある。'}
- ],
- B:[
-  {id:'scope',title:'複数路線での異常事案について',body:'「別々の路線で起きたことに、つながりがあるとは思いません。」',expected:'incident',response:'日比谷線・丸ノ内線・千代田線の記録を並べると、その説明だけでは同時発生を説明できない。'},
-  {id:'substance',title:'鑑定結果について',body:'「現場で見つかった物質については、何も知りません。」',expected:'lab',response:'鑑定報告は、現場で回収された試料からルーメンXが検出されたことを示している。'}
- ],
- C:[
-  {id:'testimony',title:'関係者の説明の一致について',body:'「関係者の説明に、食い違いはなかったはずです。」',expected:'crosscheck',response:'ゲーム内の照合メモには、説明が一致しない箇所が記されている。'},
-  {id:'orders',title:'内部の連絡経路について',body:'「内部の連絡と事件は無関係です。指示を受けたこともありません。」',expected:'command',response:'証拠を整理した仮説図と照合すると、その説明は再検討が必要になる。'}
- ]
-};
-const portraits = {
- A:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="久我直人の人物イラスト"><defs><linearGradient id="pa" x2="0" y2="1"><stop stop-color="#244452"/><stop offset="1" stop-color="#091720"/></linearGradient></defs><rect width="220" height="280" fill="url(#pa)"/><path d="M20 280Q25 215 74 195L110 184L151 194Q198 216 202 280Z" fill="#1a2937"/><path d="M78 190L110 221L143 190L163 280H57Z" fill="#d5d9d4"/><path d="M99 207L110 225L121 207L132 280H88Z" fill="#263d4c"/><path d="M76 82Q77 28 121 29Q164 31 163 91L155 149Q143 180 112 181Q80 174 69 140Z" fill="#d8b99e"/><path d="M70 101Q59 57 83 30Q113 3 151 29Q177 51 164 111L153 75Q135 67 121 51Q107 75 77 77Z" fill="#17212b"/><path d="M78 94L100 91M126 91L151 94" stroke="#352c29" stroke-width="5"/><path d="M83 109Q94 104 103 110M128 110Q139 104 149 109" stroke="#242b31" stroke-width="3" fill="none"/><ellipse cx="96" cy="111" rx="4" ry="3" fill="#1d2b31"/><ellipse cx="137" cy="111" rx="4" ry="3" fill="#1d2b31"/><path d="M116 113L111 135L120 138M101 153Q115 158 130 151" stroke="#795d53" stroke-width="2" fill="none"/><path d="M76 80Q60 106 73 145L84 161L88 137L83 105M151 79Q170 108 153 150L143 164L139 134L146 104" fill="#17212b"/><path d="M0 245H220" stroke="#6b9aa2" opacity=".4"/><text x="14" y="22" fill="#a6c4c9" font-size="9" letter-spacing="2">SUBJECT A</text></svg>',
- B:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="三枝遼の人物イラスト"><defs><linearGradient id="pb" x2="0" y2="1"><stop stop-color="#35434a"/><stop offset="1" stop-color="#0b1820"/></linearGradient></defs><rect width="220" height="280" fill="url(#pb)"/><path d="M15 280Q23 215 75 197L111 185L150 198Q195 219 205 280Z" fill="#24313b"/><path d="M79 192L110 218L143 193L166 280H55Z" fill="#c9d1d0"/><path d="M100 211L111 230L122 211L133 280H89Z" fill="#344d5a"/><path d="M75 82Q74 34 113 31Q157 28 160 86L153 146Q140 179 110 181Q80 172 69 139Z" fill="#d8b99e"/><path d="M66 104Q58 63 79 34Q101 9 141 25Q171 42 166 96L152 77L140 61Q113 75 88 66L76 99Z" fill="#302b2a"/><path d="M74 81Q59 111 76 152L89 165L86 126L91 91M153 78Q169 105 151 151L139 165L143 125L139 91" fill="#302b2a"/><path d="M82 108Q93 102 103 108M126 108Q138 102 148 108" stroke="#44342f" stroke-width="3" fill="none"/><ellipse cx="96" cy="113" rx="4" ry="3" fill="#263239"/><ellipse cx="137" cy="113" rx="4" ry="3" fill="#263239"/><path d="M116 114L110 135L119 139M100 154Q115 149 131 155" stroke="#8c675b" stroke-width="2" fill="none"/><path d="M0 245H220" stroke="#6b9aa2" opacity=".4"/><text x="14" y="22" fill="#a6c4c9" font-size="9" letter-spacing="2">SUBJECT B</text></svg>',
- C:'<svg class="portrait" viewBox="0 0 220 280" role="img" aria-label="黒瀬真司の人物イラスト"><defs><linearGradient id="pc" x2="0" y2="1"><stop stop-color="#3b344a"/><stop offset="1" stop-color="#10131d"/></linearGradient></defs><rect width="220" height="280" fill="url(#pc)"/><path d="M15 280Q24 218 75 199L110 187L151 198Q196 220 205 280Z" fill="#171d29"/><path d="M79 193L110 219L143 193L165 280H55Z" fill="#d4d7d1"/><path d="M99 212L110 229L121 212L133 280H87Z" fill="#242c3a"/><path d="M76 82Q75 33 113 31Q157 29 161 88L153 147Q139 180 110 181Q79 174 68 140Z" fill="#cfae94"/><path d="M66 99Q56 57 82 29Q113 6 151 29Q170 43 164 94L153 74Q130 62 112 56Q98 76 74 78Z" fill="#161820"/><path d="M77 76Q66 99 75 133L87 158L88 112L84 88M151 75Q166 102 150 151L140 163L141 115L145 88" fill="#161820"/><path d="M81 105Q94 99 104 106M126 106Q139 99 149 104" stroke="#332c2b" stroke-width="4" fill="none"/><ellipse cx="96" cy="111" rx="4" ry="3" fill="#1e252b"/><ellipse cx="138" cy="111" rx="4" ry="3" fill="#1e252b"/><path d="M116 114L110 136L120 139M100 154Q115 157 130 151" stroke="#795d53" stroke-width="2" fill="none"/><path d="M0 245H220" stroke="#8b7ba7" opacity=".4"/><text x="14" y="22" fill="#c1b2d4" font-size="9" letter-spacing="2">SUBJECT C</text></svg>'
-};
-let state;
-function freshState(){
- state={turns:12,found:[],contradictions:0,activeSuspect:'A',tab:'home',pending:null,finished:false,won:false,logs:[],suspects:JSON.parse(JSON.stringify(suspectSeed)),usedEvidence:[]};
- state.logs.push({text:'捜査開始。行動回数は12回。資料を調べ、証言と証拠を照合せよ。',tone:''});
- state.logs.push({text:'注意：取調べの会話と自供はゲーム用のフィクション。作中設定の引用ではない。',tone:''});
+/* Hotspots share the exact artwork coordinate space and remain visually hidden. */
+#view:has(.adventure-scene){
+ display:grid;
+ place-items:center;
+ width:100vw;
+ height:100svh;
+ min-height:100svh;
+ overflow:hidden;
 }
-function getEvidence(id){return evidenceSeed.find(function(e){return e.id===id;});}
-function hasEvidence(id){return state.found.indexOf(id)!==-1;}
-function anyConfession(){return Object.keys(state.suspects).some(function(id){return state.suspects[id].confessed;});}
-function coreComplete(){return ['incident','lab','facility','prior'].every(hasEvidence);}
-function log(text,tone){state.logs.unshift({text:text,tone:tone||''});if(state.logs.length>7)state.logs.pop();}
-function cap(x){return Math.max(0,Math.min(100,x));}
-function selected(){return state.suspects[state.activeSuspect];}
-function unlocked(e){
- if(!e.unlock)return true;
- if(e.unlock==='contradiction')return state.contradictions>0;
- if(e.unlock==='confession')return anyConfession();
- return false;
+.adventure-scene{
+ position:relative;
+ width:min(100vw,179.1666667svh);
+ height:auto;
+ aspect-ratio:43 / 24;
+ min-height:0;
+ margin:0;
+ overflow:hidden;
 }
-function suspectUnlocked(id){return id!=='C'||anyConfession();}
-function useTurn(){
- if(state.finished||state.turns<=0){return false;}
- state.turns--;
- return true;
+.scene-background{
+ position:absolute;
+ inset:0;
+ display:block;
+ width:100%;
+ height:100%;
+ object-fit:fill;
 }
-function checkSilence(id){
- const s=state.suspects[id];
- if(s.resistance>=100&&!s.silenced&&!s.confessed){
-  s.resistance=100;s.silenced=true;
-  log(s.name+'は反発が限界に達し、黙秘に転じた。以後この人物への質問はできない。','bad');
- }
-}
-function finishCheck(){
- if(coreComplete()&&anyConfession()){
-  state.finished=true;state.won=true;
-  log('主要資料4点と供述がそろった。証拠連鎖を立証した。','good');
-  return;
- }
- if(state.turns<=0){
-  state.finished=true;state.won=false;
-  log('行動回数を使い切った。捜査班は結論を立証できなかった。','bad');
- }
-}
-function doSearch(id){
- const e=getEvidence(id);
- if(!e||hasEvidence(id)||!unlocked(e)||!useTurn())return;
- state.found.push(id);
- log('資料を確認：「'+e.title+'」を証拠ファイルに追加。','good');
- if(e.type==='ゲーム内資料')log('これはゲーム内で作成された架空資料。作中設定の記録とは区別する。');
- finishCheck();render();
-}
-function askQuestion(qid){
- if(state.finished||state.pending)return;
- const id=state.activeSuspect,s=state.suspects[id];
- if(!suspectUnlocked(id)||s.confessed||s.silenced||s.asked.indexOf(qid)!==-1)return;
- const q=questions[id].find(function(x){return x.id===qid;});
- if(!q||!useTurn())return;
- s.asked.push(qid);s.agitation=cap(s.agitation+8);s.resistance=cap(s.resistance+4);
- state.pending={suspect:id,question:qid,expected:q.expected,body:q.body,response:q.response};
- log(s.name+'に質問：「'+q.title+'」');
- checkSilence(id);
- if(!s.silenced)log('証言を記録した。矛盾を指摘する証拠を選べ。');
- finishCheck();render();
-}
-function presentEvidence(eid){
- if(state.finished||!state.pending||!hasEvidence(eid)||!useTurn())return;
- const p=state.pending,s=state.suspects[p.suspect],e=getEvidence(eid);
- if(eid===p.expected){
-  state.contradictions++;
-  s.agitation=cap(s.agitation+50);
-  s.resistance=cap(s.resistance-10);
-  log('矛盾を立証：「'+e.title+'」が証言と食い違う。動揺が大きく上昇。','good');
-  log(p.response,'good');
- }else{
-  s.agitation=cap(s.agitation+4);
-  s.resistance=cap(s.resistance+38);
-  log('証拠提示が不適切。「'+e.title+'」では、この証言の矛盾を立証できない。','bad');
-  log(s.name+'の反発が強まった。');
- }
- state.pending=null;
- checkSilence(p.suspect);
- finishCheck();render();
-}
-function pressure(){
- if(state.finished||state.pending)return;
- const id=state.activeSuspect,s=state.suspects[id];
- if(!suspectUnlocked(id)||s.confessed||s.silenced||!useTurn())return;
- if(s.agitation>=100){
-  s.confessed=true;
-  const line='「……もう否定できない。私が知っていることを話す。」';
-  log(s.name+'が自供した（ゲーム内の架空の会話）。', 'good');
-  log(line,'good');
-  state.pending=null;
- }else{
-  s.resistance=cap(s.resistance+35);
-  log('問い詰めるには動揺が足りない。反発が上昇した。','bad');
-  if(s.resistance<100)log('先に質問を重ね、証拠で矛盾を立証する必要がある。');
- }
- checkSilence(id);
- finishCheck();render();
-}
-function esc(v){return String(v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function countConfessions(){return Object.keys(state.suspects).filter(function(id){return state.suspects[id].confessed;}).length;}
-function renderHud(){
- document.getElementById('turnHud').textContent=state.turns+' / 12';
- document.getElementById('turnHud').className='hud-value'+(state.turns<=3?' alert':'');
- const coreCount=['incident','lab','facility','prior'].filter(hasEvidence).length;
- document.getElementById('progressHud').textContent='事件資料 '+coreCount+'/4 ・ 供述 '+countConfessions()+'/3';
- document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===state.tab);});
- const titles={home:['霞ケ関駅・現場調査','画面内の調査ポイントを選択する'],evidence:['証拠ファイル','収集した資料を確認・提示する'],interview:['取調室','質問 → 証拠提示 → 問い詰める'],records:['捜査記録','事件の経緯とプレイ中の記録']};
- document.getElementById('viewTitle').textContent=titles[state.tab][0];
- document.getElementById('viewSubtitle').textContent=titles[state.tab][1];
-}
-function renderEvidence(){
- let out='<h3 class="section-title">証拠資料ファイル</h3><p class="subtext">資料の調査も1ターン消費する。質問中の証言は保留したまま、資料を調べて戻ることもできる。</p>';
- if(state.pending)out+='<div class="notice"><strong>証言を保留中：</strong>いまは「'+esc(getEvidence(state.pending.expected).title)+'」が有効な証拠候補。正しい資料を提示すれば動揺が大きく上がる。</div>';
- out+='<div class="evidence-grid">';
- evidenceSeed.forEach(function(e){
-  const found=hasEvidence(e.id),can=unlocked(e);
-  out+='<article class="evidence-card"><div class="evidence-title">'+esc(e.title)+'</div><div class="evidence-type">'+esc(e.type)+(e.core?' · 解決に必要':'')+'</div><div class="evidence-desc">'+esc(found?e.detail:e.description)+'</div><div class="mini">'+(found?'<span class="tag done">確認済み</span>':(!can?'<span class="tag">未解放</span>':'<span class="tag">未調査</span>'))+'</div>';
-  if(found&&state.pending)out+='<button class="btn primary" data-action="present" data-id="'+e.id+'" '+(state.finished?'disabled':'')+'>この証拠を提示する</button>';
-  else if(!found)out+='<button class="btn" data-action="search" data-id="'+e.id+'" '+(!can||state.finished||state.turns<=0?'disabled':'')+'>調査する（-1）</button>';
-  else out+='<button class="btn muted" disabled>証拠ファイルに保管済み</button>';
-  out+='</article>';
- });
- out+='</div>';
- if(state.pending)out+='<div class="btnrow"><button class="btn" data-tab="interview">取調室に戻る</button></div>';
- return out;
-}
-function renderSuspect(id){
- const s=state.suspects[id],isLock=!suspectUnlocked(id);
- let out='';
- out+='<div class="suspect-grid">';
- Object.keys(state.suspects).forEach(function(sid){
-  const p=state.suspects[sid];
-  out+='<button class="suspect-choice '+(sid===id?'active':'')+'" data-action="select-suspect" data-id="'+sid+'" '+(state.finished||!suspectUnlocked(sid)?'disabled':'')+'><span class="sname">'+esc(p.name)+'</span><span class="sdesc">'+(p.confessed?'自供済み':(p.silenced?'黙秘中':esc(p.short)))+'</span></button>';
- });
- out+='</div>';
- if(isLock){out+='<div class="empty">供述照合が進むまで、この人物への取調べはできない。</div>';return out;}
- out+='<div class="person-card">'+portraits[id]+'<div><h3 class="person-name">'+esc(s.name)+'</h3><div class="person-role">'+esc(s.role)+'</div><p class="person-note">'+esc(s.bio)+'</p><div style="margin-top:8px">'+(s.confessed?'<span class="tag done">自供済み</span>':s.silenced?'<span class="tag" style="border-color:#ff777d;color:#ff777d">黙秘</span>':'<span class="tag fiction">架空の人物</span>')+'</div></div></div>';
- if(s.confessed){out+='<div class="dialogue"><div class="speaker">'+esc(s.name)+'</div><div class="line">「……もう否定できない。私が知っていることを話す。」</div><div class="response-hint">この発言はゲーム用の架空の会話であり、実在の供述ではない。</div></div>';return out;}
- if(s.silenced){out+='<div class="empty">反発ゲージが最大になり、この人物は黙秘している。別の関係者からの供述、または未確認資料の調査に切り替えよう。</div>';return out;}
- if(state.pending){
-  const p=state.pending,q=questions[p.suspect].find(function(x){return x.id===p.question;});
-  out+='<div class="dialogue"><div class="speaker">'+esc(s.name)+' の証言</div><div class="line">'+esc(p.body)+'</div><div class="response-hint">証拠を選んで矛盾を立証する。誤った提示は反発を大きく上昇させる。</div></div>';
-  const found=state.found.map(getEvidence);
-  out+='<h3 class="section-title">証拠を突きつける</h3>';
-  if(!found.length)out+='<div class="empty">まだ証拠がない。資料画面へ移動して調査しよう。</div>';
-  else{out+='<div class="question-list">';found.forEach(function(e){out+='<button class="question" data-action="present" data-id="'+e.id+'" '+(state.finished||state.turns<=0?'disabled':'')+'><span class="arrow">▶</span><span class="qcopy"><span class="qtitle">'+esc(e.title)+'</span><br><span class="qdesc">'+esc(e.type)+' / 提示する（-1）</span></span></button>';});out+='</div>';}
-  out+='<div class="btnrow"><button class="btn" data-tab="evidence">資料を調べに行く</button></div>';
-  return out;
- }
- out+='<h3 class="section-title">何を聞く？</h3>';
- const qs=questions[id];let available=0;
- out+='<div class="question-list">';
- qs.forEach(function(q){
-  let locked=(id==='C'&&((q.id==='testimony'&&!hasEvidence('crosscheck'))||(q.id==='orders'&&!hasEvidence('command'))));
-  let asked=s.asked.indexOf(q.id)!==-1;
-  if(!locked&&!asked)available++;
-  out+='<button class="question" data-action="ask" data-id="'+q.id+'" '+(state.finished||state.turns<=0||asked||locked?'disabled':'')+'><span class="arrow">▶</span><span class="qcopy"><span class="qtitle">'+esc(q.title)+'</span><br><span class="qdesc">'+(asked?'質問済み':locked?'必要なゲーム内資料が未確認':'質問する（-1）')+'</span></span></button>';
- });
- out+='</div>';
- out+='<div class="btnrow"><button class="btn danger" data-action="pressure" '+(state.finished||state.turns<=0?'disabled':'')+'>問い詰める（-1）</button><button class="btn" data-action="show-gauges">ゲージの意味</button></div>';
- out+='<div class="response-hint">動揺が100で問い詰めると自供。反発が100になると、その人物は黙秘する。</div>';
- return out;
-}
-function renderInterview(){
- const s=selected();
- let out='<div class="scene-header"><strong>SCENE 02 / INTERROGATION ROOM</strong><span>SUBJECT '+state.activeSuspect+' / '+esc(s.name)+'</span></div>';
- out+='<p class="subtext">話題を選んで質問する。証言を記録したら、証拠ファイルから対応する資料を提示する。</p>';
- out+='<div class="interview-gauges"><div class="meter-wrap"><div class="meter-head"><span>動揺</span><strong>'+s.agitation+' / 100</strong></div><div class="meter"><div class="meter-fill agitation" style="width:'+s.agitation+'%"></div></div></div><div class="meter-wrap"><div class="meter-head"><span>反発</span><strong>'+s.resistance+' / 100</strong></div><div class="meter"><div class="meter-fill resistance" style="width:'+s.resistance+'%"></div></div></div></div>';
- out+=renderSuspect(state.activeSuspect);
- return out;
-}
-function renderRecords(){
- const timeline=[
-  ['2026.04.18','都心3路線で異常事案発生','東京都内の日比谷線・丸ノ内線・千代田線の霞ケ関駅、築地駅、小伝馬町駅周辺で乗客の意識障害が相次ぐ。'],
-  ['2026.04.18','初動捜査・鑑定','現場で回収した試料から、架空の物質ルーメンXが検出される。'],
-  ['2026.04.21','星環会関連施設の捜索','証拠隠滅未遂事件の捜査を契機に関連施設を捜索。保管記録と設備を押収する。'],
-  ['2026.04.26–27','捜査の進展・身柄確保','複数の証拠を照合し、事件に関与した疑いのある人物の身柄を確保する。']
- ];
- let out='<h3 class="section-title">事件解決の証拠連鎖</h3><p class="subtext">作中設定として確認できる出来事と、ゲーム内の架空の取調べは別々に扱う。</p>';
- out+='<div class="notice"><strong>解決条件：</strong>事件資料4点（被害記録・鑑定・施設捜索・先行事件）を集め、少なくとも1人の架空の関係者から自供を得る。</div>';
- out+='<div class="goal-list" style="margin-bottom:18px">';
- [
-  ['incident','複数路線の被害記録'],
-  ['lab','遺留物の鑑定報告'],
-  ['facility','施設捜索・押収資料'],
-  ['prior','先行事件の捜査資料']
- ].forEach(function(it){
-  out+='<div class="goal"><span class="'+(hasEvidence(it[0])?'check':'unchecked')+'">'+(hasEvidence(it[0])?'■':'□')+'</span><span>'+it[1]+'</span></div>';
- });
- out+='<div class="goal"><span class="'+(anyConfession()?'check':'unchecked')+'">'+(anyConfession()?'■':'□')+'</span><span>ゲーム内の架空の関係者の自供</span></div></div>';
- out+='<h3 class="section-title">作中設定の捜査経緯</h3><div class="timeline">';
- timeline.forEach(function(t){out+='<div class="time-item"><div class="time-date">'+t[0]+'</div><div class="time-title">'+t[1]+'</div><div class="time-copy">'+t[2]+'</div></div>';});
- out+='</div><div class="notice">このゲームの「自供」はプレイ上の架空表現。実際の容疑者の供述や捜査記録を再現したものではない。</div>';
- out+='<h3 class="section-title" style="margin-top:20px">プレイ中の行動ログ</h3><ul class="log-list record-log">'+state.logs.map(function(x){return '<li class="'+esc(x.tone)+'">'+esc(x.text)+'</li>';}).join('')+'</ul>';
- return out;
-}
-function renderSide(){
- return;
- const goals=[
-  ['incident','複数路線の被害記録'],
-  ['lab','鑑定報告'],
-  ['facility','施設捜索資料'],
-  ['prior','先行事件の捜査資料']
- ];
- let g='<h3 class="side-title">立証に必要な事件資料</h3><div class="goal-list">';
- goals.forEach(function(x){g+='<div class="goal"><span class="'+(hasEvidence(x[0])?'check':'unchecked')+'">'+(hasEvidence(x[0])?'■':'□')+'</span><span>'+x[1]+'</span></div>';});
- g+='<div class="goal"><span class="'+(anyConfession()?'check':'unchecked')+'">'+(anyConfession()?'■':'□')+'</span><span>架空の関係者の自供</span></div></div>';
- g+='<div class="side-divider"></div><p class="fact">残り行動回数が0になる前に、資料と供述をそろえよう。</p>';
- document.getElementById('goals').innerHTML=g;
- const s=selected();
- let p='<div class="meter-wrap"><div class="meter-head"><span>動揺</span><strong>'+s.agitation+' / 100</strong></div><div class="meter"><div class="meter-fill agitation" style="width:'+s.agitation+'%"></div></div></div>';
- p+='<div class="meter-wrap"><div class="meter-head"><span>反発</span><strong>'+s.resistance+' / 100</strong></div><div class="meter"><div class="meter-fill resistance" style="width:'+s.resistance+'%"></div></div></div>';
- p+='<div class="side-divider"></div><p class="fact"><strong style="color:var(--gold)">動揺 MAX：</strong>問い詰めると自供。</p><p class="fact"><strong style="color:var(--red)">反発 MAX：</strong>黙秘に転じ、以後その人物には質問できない。</p>';
- document.getElementById('gaugePanel').innerHTML=p;
-}
-function renderLogs(){
- const logRoot=document.getElementById('log');
- if(logRoot)logRoot.innerHTML=state.logs.map(function(x){return '<li class="'+esc(x.tone)+'">'+esc(x.text)+'</li>';}).join('');
-}
-function renderHome(){
- const spots=[
-  {id:'incident',x:20,y:34,label:'運行記録端末',sub:'発生時刻・路線'},
-  {id:'lab',x:77,y:32,label:'鑑識資料モニター',sub:'試料鑑定データ'},
-  {id:'facility',x:67,y:70,label:'押収物保管棚',sub:'施設捜索資料'},
-  {id:'prior',x:30,y:74,label:'旧事件ファイル',sub:'先行事件の記録'}
- ];
- const done=spots.filter(function(x){return hasEvidence(x.id);}).length;
- let out='<div class="adventure-scene" aria-label="捜査本部オフィス">';
- out+='<img class="scene-background" src="assets/backgrounds/hq-office-pov.jpg" alt="主人公の席から見た捜査本部オフィス">';
- out+='<div class="scene-vignette"></div>';
- out+='<div class="scene-status">捜査資料 '+done+' / 4　｜　残り行動 '+state.turns+'</div>';
- out+='<button class="scene-menu-button" data-action="toggle-menu" aria-expanded="false">MENU</button>';
- out+='<div class="scene-menu" id="sceneMenu"><div class="scene-menu-title">CASE MENU</div><button data-tab="evidence">証拠ファイルを開く</button><button data-tab="interview">関係者と話す</button><button data-tab="records">捜査記録を確認する</button><button data-action="close-menu">画面に戻る</button></div>';
- out+='<div class="scene-context" id="sceneContext" role="dialog" aria-live="polite"></div>';
- spots.forEach(function(p){
-  const found=hasEvidence(p.id);
-  out+='<button class="hotspot" style="left:'+p.x+'%;top:'+p.y+'%" data-action="open-context" data-id="'+p.id+'" aria-label="'+esc(p.label)+'" '+(found||state.finished||state.turns<=0?'disabled':'')+'><span class="hotspot-label">'+esc(p.label)+'</span></button>';
- });
- out+='</div>';
- return out;
-}
-function renderEnding(){
- const root=document.getElementById('ending');
- if(!state.finished){root.innerHTML='';return;}
- if(state.won){
-  root.innerHTML='<section class="ending"><div class="eyebrow">CASE FILE COMPLETE</div><h2>捜査記録を立証した</h2><p>必要な事件資料4点を集め、ゲーム内の架空の関係者から供述を得た。被害記録、鑑定結果、施設捜索、先行事件の経緯を証拠連鎖として整理できた。</p><p>これはゲーム内の達成結果であり、歴史上の捜査や実在人物の自供を再現・評価したものではない。</p><button class="btn primary" data-action="restart">もう一度プレイする</button></section>';
- }else{
-  root.innerHTML='<section class="ending"><div class="eyebrow">TIME UP</div><h2>行動回数を使い切った</h2><p>証拠の収集と供述の立証を、制限ターン内に完了できなかった。どの証言から崩すか、どの資料を優先するかを見直そう。</p><p>ヒント：施設久我直人には「施設捜索・押収資料」と「先行事件の捜査資料」、当日の動向を知るBには「複数路線の被害記録」と「鑑定報告」を提示すると動揺が大きく上がる。</p><button class="btn primary" data-action="restart">最初からやり直す</button></section>';
- }
-}
-function render(){
- renderHud();
- let content=state.tab==='home'?renderHome():state.tab==='evidence'?renderEvidence():state.tab==='interview'?renderInterview():renderRecords();
- if(state.tab!=='home')content='<button class="btn scene-back" data-tab="home">← オフィスに戻る</button>'+content;
- document.getElementById('view').innerHTML=content;
- renderSide();renderLogs();renderEnding();
-}
-document.addEventListener('click',function(ev){
- const btn=ev.target.closest('button');
- if(!btn)return;
- const action=btn.dataset.action,id=btn.dataset.id;
- if(action==='restart'){freshState();render();return;}
- if(action==='toggle-menu'){
-  const menu=document.getElementById('sceneMenu');
-  if(menu)menu.classList.toggle('open');
-  btn.setAttribute('aria-expanded',menu&&menu.classList.contains('open')?'true':'false');
-  return;
- }
- if(action==='close-menu'){
-  const menu=document.getElementById('sceneMenu');if(menu)menu.classList.remove('open');return;
- }
- if(action==='open-context'){
-  const menu=document.getElementById('sceneContext');
-  const spot={incident:['運行記録端末','発生時刻と路線の記録を調べる'],lab:['鑑識資料モニター','試料の鑑定データを調べる'],facility:['押収物保管棚','施設捜索で押収した資料を調べる'],prior:['旧事件ファイル','先行事件の捜査記録を調べる']}[id];
-  if(menu&&spot){
-   const rect=btn.getBoundingClientRect(),scene=btn.closest('.adventure-scene'),bounds=scene.getBoundingClientRect();
-   menu.innerHTML='<div class="scene-context-title">'+esc(spot[0])+'</div><div style="font-size:10px;color:#c4d4d8">'+esc(spot[1])+'</div><button data-action="search" data-id="'+id+'">調べる</button><button data-action="close-context">閉じる</button>';
-   menu.style.left=Math.max(12,Math.min(rect.left-bounds.left,bounds.width-220))+'px';
-   menu.style.top=Math.max(72,Math.min(rect.bottom-bounds.top+8,bounds.height-130))+'px';
-   menu.classList.add('open');
-  }
-  return;
- }
- if(action==='close-context'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');return;}
- if(state.finished)return;
- if(btn.dataset.tab){state.tab=btn.dataset.tab;render();return;}
- if(action==='search'){const menu=document.getElementById('sceneContext');if(menu)menu.classList.remove('open');doSearch(id);}
- else if(action==='ask')askQuestion(id);
- else if(action==='present')presentEvidence(id);
- else if(action==='pressure')pressure();
- else if(action==='select-suspect'){if(suspectUnlocked(id)){state.activeSuspect=id;state.pending=null;state.tab='interview';render();}}
- else if(action==='show-gauges'){alert('動揺は正しい証拠提示で上昇。100で問い詰めると自供します。反発は誤った証拠提示や早すぎる追及で上昇し、100で黙秘になります。');}
-});
-freshState();render();
-})();
-</script>
-</body>
-</html>
-/* Hotspot geometry is proportional to the artwork, not to the viewport.
-   Hit areas remain invisible; only their clickable area scales with the image. */
 .adventure-scene .hotspot{
+ position:absolute;
  width:19%;
  height:17%;
  min-width:0;
@@ -617,6 +273,7 @@ freshState();render();
  box-shadow:none!important;
  color:transparent!important;
  outline:0!important;
+ transform:translate(-50%,-50%);
 }
 .adventure-scene .hotspot:hover,
 .adventure-scene .hotspot:focus,
@@ -630,7 +287,6 @@ freshState();render();
 }
 .adventure-scene .hotspot-label{display:none!important}
 .adventure-scene .hotspot:before{display:none!important}
-
 </style>
 </head>
 <body>
