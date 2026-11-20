@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Aquvi — ローカルの暗号化アーカイブを閲覧するChrome拡張。ファイルをアップロードせず、ブラウザ内で読み込みます。">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Aquvi — Private Archive Viewer</title>
+  <style>
+    :root {
+      --ink: #344054;
+      --muted: #7b8492;
+      --line: #dfe2e8;
+      --paper: #ffffff;
+      --ground: #f3f4f6;
+      --lavender: #927bb5;
+      --lavender-dark: #78619d;
+      --lavender-pale: #eeebf4;
+      --blue: #567a9f;
+      --green: #6b9a83;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--ground);
+      font: 15px/1.75 "Helvetica Neue", Helvetica, Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { width: min(980px, calc(100% - 36px)); margin: 0 auto; }
+    .site-header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 2px rgba(30, 40, 55, .04);
+    }
+    .header-inner { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .site-brand { color: #3d4655; font-size: 19px; font-weight: 700; letter-spacing: .04em; }
+    .site-brand span { color: var(--lavender); }
+    .site-nav { display: flex; align-items: center; gap: 24px; font-size: 13px; }
+    .site-nav a { color: #697485; }
+    .site-nav a:hover { color: var(--lavender-dark); }
+    .hero { padding: 48px 0 36px; }
+    .hero-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(270px, .75fr);
+      gap: 34px;
+      align-items: center;
+      padding: 38px 40px;
+      background: #ebe8f1;
+      border: 1px solid #ded8e8;
+      border-radius: 4px;
+    }
+    .eyebrow { margin: 0 0 10px; color: var(--lavender-dark); font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .wordmark { margin: 0; color: #bca5d7; font-size: clamp(48px, 7vw, 68px); font-weight: 500; line-height: 1.02; letter-spacing: .015em; }
+    .subtitle { margin: 7px 0 20px; color: #746985; font-size: 12px; letter-spacing: .13em; }
+    .hero-copy { max-width: 540px; margin: 0; color: #616879; font-size: 15px; }
+    .download-box {
+      padding: 22px 22px 20px;
+      background: #fff;
+      border: 1px solid #d9d5e0;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(40, 34, 56, .08);
+    }
+    .download-box h2 { margin: 0 0 14px; color: #465064; font-size: 17px; font-weight: 600; }
+    .version-line { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid #ececf0; font-size: 12px; }
+    .version-line span:first-child { color: var(--muted); }
+    .version-line strong { color: #525c6e; font-weight: 600; text-align: right; }
+    .download-button {
+      display: block;
+      margin-top: 17px;
+      padding: 12px 15px;
+      border: 1px solid #b9b9c0;
+      border-radius: 3px;
+      background: #d9d9df;
+      color: #777b85;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      cursor: not-allowed;
+    }
+    .download-note { margin: 9px 0 0; color: #8a8e98; font-size: 11px; line-height: 1.6; }
+    .preview-label { display: inline-block; margin: 0 0 14px; padding: 3px 8px; border: 1px solid #c5b8d7; border-radius: 2px; color: #7d689a; background: #f6f3fa; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+    .section { margin: 0 0 34px; padding: 27px 30px 30px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 3px rgba(30, 40, 55, .035); }
+    .section-heading { display: flex; align-items: center; gap: 12px; margin: 0 0 19px; padding-bottom: 12px; border-bottom: 1px solid #e8e9ed; }
+    .section-heading:before { content: ""; width: 4px; height: 19px; background: var(--lavender); border-radius: 1px; }
+    .section-heading h2 { margin: 0; color: #465064; font-size: 19px; font-weight: 600; }
+    .section-intro { margin: -5px 0 19px; color: var(--muted); font-size: 13px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .feature { padding: 3px 14px 3px 0; }
+    .feature + .feature { padding-left: 18px; border-left: 1px solid #ececf0; }
+    .feature h3 { margin: 0 0 7px; color: #535e70; font-size: 15px; font-weight: 700; }
+    .feature p { margin: 0; color: #7a8492; font-size: 12px; }
+    .format-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .format-table th, .format-table td { padding: 10px 12px; border-bottom: 1px solid #e9eaee; text-align: left; vertical-align: top; }
+    .format-table th { width: 25%; color: #657083; background: #f7f7f9; font-weight: 600; }
+    .format-table td { color: #687384; }
+    .note { margin: 15px 0 0; padding: 11px 14px; border-left: 3px solid #c7b8dc; background: #f7f5fa; color: #777185; font-size: 12px; }
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: install; }
+    .step { position: relative; min-height: 125px; padding: 15px 15px 14px 48px; border: 1px solid #e5e6eb; background: #fafafb; border-radius: 3px; counter-increment: install; }
+    .step:before { content: counter(install); position: absolute; top: 14px; left: 14px; width: 24px; height: 24px; border-radius: 50%; background: var(--lavender); color: #fff; font-size: 12px; font-weight: 700; line-height: 24px; text-align: center; }
+    .step h3 { margin: 0 0 5px; color: #586276; font-size: 13px; }
+    .step p { margin: 0; color: #7b8492; font-size: 11px; }
+    code { padding: 2px 5px; border: 1px solid #e3e4e8; border-radius: 2px; background: #f4f5f7; color: #586477; font-family: Consolas, Monaco, monospace; font-size: .92em; }
+    .release-meta { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #e7e8ec; background: #fafafb; }
+    .release-meta div { padding: 13px 15px; }
+    .release-meta div + div { border-left: 1px solid #e7e8ec; }
+    .release-meta small { display: block; margin-bottom: 3px; color: #9299a4; font-size: 10px; }
+    .release-meta strong { color: #5d687a; font-size: 13px; font-weight: 600; }
+    .site-footer { margin-top: 45px; padding: 22px 0 28px; border-top: 1px solid #dfe2e8; color: #959ca7; font-size: 11px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 15px; }
+    @media (max-width: 720px) {
+      .hero-panel { grid-template-columns: 1fr; padding: 27px 23px; gap: 24px; }
+      .hero { padding: 28px 0 23px; }
+      .feature-grid, .steps { grid-template-columns: 1fr; gap: 14px; }
+      .feature + .feature { padding: 14px 0 0; border-left: 0; border-top: 1px solid #ececf0; }
+      .section { padding: 22px 19px 24px; }
+      .site-nav { gap: 13px; }
+      .release-meta { grid-template-columns: 1fr; }
+      .release-meta div + div { border-left: 0; border-top: 1px solid #e7e8ec; }
+    }
+    @media (max-width: 440px) {
+      .header-inner { min-height: 56px; }
+      .site-nav a:first-child { display: none; }
+      .container { width: calc(100% - 26px); }
+      .format-table th, .format-table td { padding: 9px 8px; }
+      .format-table th { width: 30%; }
+      .footer-inner { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-brand" href="../">21<span>mm</span></a>
+      <nav class="site-nav" aria-label="サイトナビゲーション">
+        <a href="../">ホーム</a>
+        <a href="#features">特徴</a>
+        <a href="#install">インストール</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-panel">
+        <div>
+          <p class="eyebrow">Chrome Extension / Local Archive Viewer</p>
+          <p class="wordmark" id="page-title">Aquvi</p>
+          <p class="subtitle">PRIVATE ARCHIVE VIEWER</p>
+          <span class="preview-label">FREE EDITION · DEVELOPMENT PREVIEW</span>
+          <p class="hero-copy">Aquviは、ローカルに保存した画像アーカイブを閲覧するためのChrome拡張機能です。ZIPや暗号化された7zをブラウザ内で読み込み、ファイルを外部へアップロードせずに閲覧できます。</p>
+        </div>
+        <aside class="download-box" aria-label="ダウンロード情報">
+          <h2>ダウンロード</h2>
+          <div class="version-line"><span>バージョン</span><strong>0.3.6 Free</strong></div>
+          <div class="version-line"><span>対応ブラウザ</span><strong>Google Chrome 103+</strong></div>
+          <div class="version-line"><span>ライセンス</span><strong>Third-party notices included</strong></div>
+          <div class="download-button" aria-disabled="true">ZIPダウンロード — 公開準備中</div>
+          <p class="download-note">配布ZIPの公開先を設定後、このボタンから直接ダウンロードできるようになります。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="features" aria-labelledby="features-heading">
+      <div class="section-heading"><h2 id="features-heading">Aquviについて</h2></div>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>ローカルで閲覧</h3>
+          <p>アーカイブは選択した端末内で処理します。画像やパスワードをサーバーへ送信しません。</p>
+        </div>
+        <div class="feature">
+          <h3>暗号化アーカイブに対応</h3>
+          <p>ZIPのパスワード保護や、AES-256で暗号化された7zファイルを開けます。</p>
+        </div>
+        <div class="feature">
+          <h3>読みやすいビューア</h3>
+          <p>単ページ・見開き・分割の3つの表示モードと、本棚、閲覧モードを備えています。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="formats-heading">
+      <div class="section-heading"><h2 id="formats-heading">対応形式</h2></div>
+      <table class="format-table">
+        <tbody>
+          <tr><th>ZIP / CBZ</th><td>標準ZIP、ZipCrypto、WinZip AES-128 / 192 / 256</td></tr>
+          <tr><th>7z</th><td>AES-256暗号化、暗号化ヘッダーに対応</td></tr>
+          <tr><th>その他</th><td>TAR、ZIP BZIP2エントリー、画像フォルダ</td></tr>
+        </tbody>
+      </table>
+      <p class="note">このページの0.3.6は開発プレビューです。RARやZIP64など、一部の形式はFree版では対象外です。対応範囲は今後の更新で変更される場合があります。</p>
+    </section>
+
+    <section class="section" id="install" aria-labelledby="install-heading">
+      <div class="section-heading"><h2 id="install-heading">インストール方法</h2></div>
+      <p class="section-intro">配布ZIPをダウンロードできるようになったら、次の手順でChromeに追加できます。</p>
+      <div class="steps">
+        <div class="step">
+          <h3>ZIPを展開</h3>
+          <p>ダウンロードしたZIPファイルを展開し、Aquviのフォルダを用意します。</p>
+        </div>
+        <div class="step">
+          <h3>拡張機能の設定を開く</h3>
+          <p>Chromeで <code>chrome://extensions/</code> を開き、「デベロッパーモード」を有効にします。</p>
+        </div>
+        <div class="step">
+          <h3>フォルダを読み込む</h3>
+          <p>「パッケージ化されていない拡張機能を読み込む」を押し、展開したAquviフォルダを選択します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="release-heading">
+      <div class="section-heading"><h2 id="release-heading">バージョン情報</h2></div>
+      <div class="release-meta">
+        <div><small>VERSION</small><strong>0.3.6 Free Preview</strong></div>
+        <div><small>BUILD DATE</small><strong>2026.11.20</strong></div>
+        <div><small>PLATFORM</small><strong>Chrome Extension · Manifest V3</strong></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© 21mm · Aquvi</span>
+      <span><a href="../">21mm ホームへ戻る</a></span>
+    </div>
+  </footer>
+</body>
+</html>
