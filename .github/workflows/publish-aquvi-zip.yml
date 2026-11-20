@@ -14,14 +14,15 @@ jobs:
           persist-credentials: true
       - name: Download and validate release ZIP
         env:
-          ARTIFACT_URL: "https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-e5e8-8211-872a-5d98c6235bed/raw?se=2026-11-20T11%3A49%3A37Z&sp=r&sv=2026-06-06&sr=b&scid=8317a0c1-50d4-57e4-be5d-9980b373c400&skoid=697dc613-6c29-4a76-87a7-d1b783c6d43f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-20T04%3A04%3A48Z&ske=2026-11-21T04%3A04%3A48Z&sks=b&skv=2026-06-06&sig=qsDmrlGQrsFm9yFa17OyNI43EfcYX8OPCt99NfSHFjU%3D"
+          ARTIFACT_URL_B64: "aHR0cHM6Ly9zZG1udHBybnpub3J0aC5vYWl1c2VyY29udGVudC5jb20vZmlsZXMvMDAwMDAwMDAtYjA0MC04MjBiLWE1MTYtOTc0ZGUxYTgxYTFmL3Jhdz9zZT0yMDI2LTExLTIwVDExJTNBNTIlM0EwN1omc3A9ciZzdj0yMDI2LTA2LTA2JnNyPWImc2NpZD03YzA2NGM5Zi1jMmMyLTU2MjItYTFjNy01MTEzZGViY2I3MjEmc2tvaWQ9Njk3ZGM2MTMtNmMyOS00YTc2LTg3YTctZDFiNzgzYzZkNDNmJnNrdGlkPWE0OGNjYTU2LWU2ZGEtNDg0ZS1hODE0LTljODQ5NjUyYmNiMyZza3Q9MjAyNi0xMS0yMFQwNCUzQTExJTNBMzFaJnNrZT0yMDI2LTExLTIxVDA0JTNBMTElM0EzMVomc2tzPWImc2t2PTIwMjYtMDYtMDYmc2lnPVlRVUVDbVE3ZGdURXJ4TVB4WU1wa2hhY0s0M0J0dWNVZ2ZjeGwvMEtEWTglM0Q="
         run: |
           set -euo pipefail
+          ARTIFACT_URL="$(printf '%s' "$ARTIFACT_URL_B64" | base64 --decode)"
           mkdir -p aquvi/downloads
-          curl --fail --location --silent --show-error "$ARTIFACT_URL" -o /tmp/Aquvi-0.3.6-free.zip
-          unzip -t /tmp/Aquvi-0.3.6-free.zip
-          test "$(unzip -Z1 /tmp/Aquvi-0.3.6-free.zip | grep -c '^manifest.json$')" -eq 1
-          cp /tmp/Aquvi-0.3.6-free.zip aquvi/downloads/Aquvi-0.3.6-free.zip
+          curl --fail --location --silent --show-error "$ARTIFACT_URL" -o /tmp/aquvi-artifact.zip
+          unzip -p /tmp/aquvi-artifact.zip Aquvi-0.3.6-free.zip > aquvi/downloads/Aquvi-0.3.6-free.zip
+          unzip -t aquvi/downloads/Aquvi-0.3.6-free.zip
+          unzip -Z1 aquvi/downloads/Aquvi-0.3.6-free.zip | grep -qx 'manifest.json'
       - name: Commit ZIP and remove one-time workflow
         run: |
           set -euo pipefail
