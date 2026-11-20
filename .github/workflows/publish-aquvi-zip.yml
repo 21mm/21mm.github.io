@@ -1,0 +1,33 @@
+name: Publish Aquvi ZIP
+on:
+  push:
+    paths:
+      - ".github/workflows/publish-aquvi-zip.yml"
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download and validate release ZIP
+        env:
+          ARTIFACT_URL: "https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-e5e8-8211-872a-5d98c6235bed/raw?se=2026-11-20T11%3A49%3A37Z&sp=r&sv=2026-06-06&sr=b&scid=8317a0c1-50d4-57e4-be5d-9980b373c400&skoid=697dc613-6c29-4a76-87a7-d1b783c6d43f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-20T04%3A04%3A48Z&ske=2026-11-21T04%3A04%3A48Z&sks=b&skv=2026-06-06&sig=qsDmrlGQrsFm9yFa17OyNI43EfcYX8OPCt99NfSHFjU%3D"
+        run: |
+          set -euo pipefail
+          mkdir -p aquvi/downloads
+          curl --fail --location --silent --show-error "$ARTIFACT_URL" -o /tmp/Aquvi-0.3.6-free.zip
+          unzip -t /tmp/Aquvi-0.3.6-free.zip
+          test "$(unzip -Z1 /tmp/Aquvi-0.3.6-free.zip | grep -c '^manifest.json$')" -eq 1
+          cp /tmp/Aquvi-0.3.6-free.zip aquvi/downloads/Aquvi-0.3.6-free.zip
+      - name: Commit ZIP and remove one-time workflow
+        run: |
+          set -euo pipefail
+          rm .github/workflows/publish-aquvi-zip.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aquvi/downloads/Aquvi-0.3.6-free.zip .github/workflows/publish-aquvi-zip.yml
+          git commit -m "Publish Aquvi 0.3.6 Free ZIP"
+          git push
