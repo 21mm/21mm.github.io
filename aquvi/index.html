@@ -72,15 +72,16 @@
       display: block;
       margin-top: 17px;
       padding: 12px 15px;
-      border: 1px solid #b9b9c0;
+      border: 1px solid var(--lavender-dark);
       border-radius: 3px;
-      background: #d9d9df;
-      color: #777b85;
+      background: var(--lavender);
+      color: #fff;
       font-size: 14px;
       font-weight: 700;
       text-align: center;
-      cursor: not-allowed;
+      cursor: pointer;
     }
+    .download-button:hover { background: var(--lavender-dark); text-decoration: none; }
     .download-note { margin: 9px 0 0; color: #8a8e98; font-size: 11px; line-height: 1.6; }
     .preview-label { display: inline-block; margin: 0 0 14px; padding: 3px 8px; border: 1px solid #c5b8d7; border-radius: 2px; color: #7d689a; background: #f6f3fa; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
     .section { margin: 0 0 34px; padding: 27px 30px 30px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 3px rgba(30, 40, 55, .035); }
@@ -157,8 +158,8 @@
           <div class="version-line"><span>バージョン</span><strong>0.3.6 Free</strong></div>
           <div class="version-line"><span>対応ブラウザ</span><strong>Google Chrome 103+</strong></div>
           <div class="version-line"><span>ライセンス</span><strong>Third-party notices included</strong></div>
-          <div class="download-button" aria-disabled="true">ZIPダウンロード — 公開準備中</div>
-          <p class="download-note">配布ZIPの公開先を設定後、このボタンから直接ダウンロードできるようになります。</p>
+          <a class="download-button" href="downloads/Aquvi-0.3.6-free.zip" download>ZIPをダウンロード（約1.2 MB）</a>
+          <p class="download-note">ZIPファイルをダウンロードし、展開してからChromeに追加してください。</p>
         </aside>
       </div>
     </section>
@@ -195,7 +196,7 @@
 
     <section class="section" id="install" aria-labelledby="install-heading">
       <div class="section-heading"><h2 id="install-heading">インストール方法</h2></div>
-      <p class="section-intro">配布ZIPをダウンロードできるようになったら、次の手順でChromeに追加できます。</p>
+      <p class="section-intro">ダウンロードしたZIPを展開し、次の手順でChromeに追加してください。</p>
       <div class="steps">
         <div class="step">
           <h3>ZIPを展開</h3>
