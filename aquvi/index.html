@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Aquvi — ローカルの暗号化アーカイブを閲覧するChrome拡張。ファイルをアップロードせず、ブラウザ内で読み込みます。">
+  <meta name="description" content="Aquviは、パソコンに保存した画像アーカイブをChromeで開いて見るための拡張機能です。">
   <meta name="theme-color" content="#f5f5f7">
   <title>Aquvi — Private Archive Viewer</title>
   <style>
@@ -89,7 +89,7 @@
     .section-heading:before { content: ""; width: 4px; height: 19px; background: var(--lavender); border-radius: 1px; }
     .section-heading h2 { margin: 0; color: #465064; font-size: 19px; font-weight: 600; }
     .section-intro { margin: -5px 0 19px; color: var(--muted); font-size: 13px; }
-    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .copy-list { margin: 0; padding-left: 1.35em; color: #687384; font-size: 13px; }\n    .copy-list li + li { margin-top: 9px; }
     .feature { padding: 3px 14px 3px 0; }
     .feature + .feature { padding-left: 18px; border-left: 1px solid #ececf0; }
     .feature h3 { margin: 0 0 7px; color: #535e70; font-size: 15px; font-weight: 700; }
@@ -151,7 +151,7 @@
           <p class="wordmark" id="page-title">Aquvi</p>
           <p class="subtitle">PRIVATE ARCHIVE VIEWER</p>
           <span class="preview-label">FREE EDITION · DEVELOPMENT PREVIEW</span>
-          <p class="hero-copy">Aquviは、ローカルに保存した画像アーカイブを閲覧するためのChrome拡張機能です。ZIPや暗号化された7zをブラウザ内で読み込み、ファイルを外部へアップロードせずに閲覧できます。</p>
+          <p class="hero-copy">パソコンに保存した画像アーカイブを、Chromeで開いて見るための拡張機能です。</p>
         </div>
         <aside class="download-box" aria-label="ダウンロード情報">
           <h2>ダウンロード</h2>
@@ -164,34 +164,31 @@
       </div>
     </section>
 
-    <section class="section" id="features" aria-labelledby="features-heading">
-      <div class="section-heading"><h2 id="features-heading">Aquviについて</h2></div>
-      <div class="feature-grid">
-        <div class="feature">
-          <h3>ローカルで閲覧</h3>
-          <p>アーカイブは選択した端末内で処理します。画像やパスワードをサーバーへ送信しません。</p>
-        </div>
-        <div class="feature">
-          <h3>暗号化アーカイブに対応</h3>
-          <p>ZIPのパスワード保護や、AES-256で暗号化された7zファイルを開けます。</p>
-        </div>
-        <div class="feature">
-          <h3>読みやすいビューア</h3>
-          <p>単ページ・見開き・分割の3つの表示モードと、本棚、閲覧モードを備えています。</p>
-        </div>
-      </div>
-    </section>
-
     <section class="section" aria-labelledby="formats-heading">
       <div class="section-heading"><h2 id="formats-heading">対応形式</h2></div>
       <table class="format-table">
         <tbody>
-          <tr><th>ZIP / CBZ</th><td>標準ZIP、ZipCrypto、WinZip AES-128 / 192 / 256</td></tr>
-          <tr><th>7z</th><td>AES-256暗号化、暗号化ヘッダーに対応</td></tr>
-          <tr><th>その他</th><td>TAR、ZIP BZIP2エントリー、画像フォルダ</td></tr>
+          <tr><th>対応アーカイブ</th><td>ZIP（CBZ）・7z・TAR（PAX）</td></tr>
+          <tr><th>対応画像</th><td>JPG・JPEG・PNG・GIF・WebP・AVIF・BMP</td></tr>
         </tbody>
       </table>
-      <p class="note">このページの0.3.6は開発プレビューです。RARやZIP64など、一部の形式はFree版では対象外です。対応範囲は今後の更新で変更される場合があります。</p>
+    </section>
+
+    <section class="section" aria-labelledby="features-heading">
+      <div class="section-heading"><h2 id="features-heading">機能</h2></div>
+      <ul class="copy-list">
+        <li>画像フォルダを本棚として登録し、中のアーカイブや画像を一覧から開けます</li>
+        <li>解凍ソフトを使わずに、ZIPやパスワード付き7zを開けます</li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="mechanism-heading">
+      <div class="section-heading"><h2 id="mechanism-heading">仕組み</h2></div>
+      <ul class="copy-list">
+        <li>読み込み・展開・表示は、すべてブラウザの中で行います。ファイルを外部サーバーに送ることはありません</li>
+        <li>閲覧を速くするためのキャッシュは、暗号化して保存します</li>
+        <li>キャッシュがあるため、同じアーカイブを次に開くときは、展開をやり直さずに済みます</li>
+      </ul>
     </section>
 
     <section class="section" id="install" aria-labelledby="install-heading">
